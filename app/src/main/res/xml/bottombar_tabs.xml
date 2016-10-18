@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs>
+
+    <tab
+        id="@+id/tab_favorites"
+        icon="@drawable/ic_favorites"
+        title="Favorites" />
+    <tab
+        id="@+id/tab_navigation"
+        icon="@drawable/ic_navigation"
+        title="Navigation" />
+    <tab
+        id="@+id/tab_map"
+        icon="@drawable/ic_map"
+        title="Map" />
+    <tab
+        id="@+id/tab_company"
+        icon="@drawable/ic_company"
+        title="Company" />
+    <tab
+        id="@+id/tab_list"
+        icon="@drawable/ic_list"
+        title="List" />
+</tabs>

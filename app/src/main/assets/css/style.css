@@ -1,0 +1,57 @@
+*, h1, p, input {
+
+	font-family: Arial, "文泉驛正黑", "WenQuanYi Zen Hei", "儷黑 Pro", "LiHei Pro", "微軟正黑體", "Microsoft JhengHei", "標楷體", DFKai-SB, sans-serif;
+
+}
+
+
+
+body {
+
+	background-color: gray;
+
+	background-size: cover;
+
+}
+
+
+
+.top-buffer {
+
+	padding-top: 60px;
+
+}
+
+
+
+.table-striped>tbody>tr:nth-child(odd)>td, .table-striped>tbody>tr:nth-child(odd)>th {
+
+	background-color: #888888;
+
+}
+
+
+
+.table-striped>tbody>tr:nth-child(even)>td, .table-striped>tbody>tr:nth-child(even)>th {
+
+	background-color: #FFFFFF;
+
+}
+
+
+
+.table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {
+
+	border-top: none;
+
+}
+
+.list-group-item{
+
+	background: rgba(255, 255, 255, .8);
+
+	color: black;
+
+	border: 1px solid #000;
+
+}
