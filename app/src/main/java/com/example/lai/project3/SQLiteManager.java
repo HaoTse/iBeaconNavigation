@@ -53,4 +53,8 @@ public class SQLiteManager extends SQLiteOpenHelper {
         return  db.query(INFO_TABLE, new String[] {_ID, PROJ_ID, NAME}, null, null, null, null, null);
     }
 
+    public void delete(SQLiteDatabase db, String id){
+        db.execSQL("delete from favorite_table"+" where proj_id='"+id+"'");
+    }
+
 }

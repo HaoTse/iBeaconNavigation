@@ -34,6 +34,7 @@ public class ListFragment extends Fragment {
     private View view;
     private JSONArray result;
     private ArrayList<String> mNames;
+    private ArrayList<String> mIds;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,22 +42,31 @@ public class ListFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_list, container, false);
 
         mNames = new ArrayList<>();
+        mIds = new ArrayList<>();
+
+        getActivity().setTitle(R.string.list_name);
 
         findView();
+        /*get data from MySQL order by exhibition_id*/
         getData(0);
+
+        /*change the display of listview*/
         toggleButton.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
                 if(isChecked){
                     mNames.clear();
+                    mIds.clear();
                     getData(1);
                 } else{
                     mNames.clear();
+                    mIds.clear();
                     getData(0);
                 }
             }
         }) ;
 
+        /* when click on list item */
         mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
@@ -64,10 +74,12 @@ public class ListFragment extends Fragment {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 Fragment fragment = new ProjectFragment();
                 ft.replace(R.id.layout_fragment, fragment);
+
+                /* pass exhibition_id to ProjectFragment*/
                 Bundle bundle = new Bundle();
-                bundle.putInt("id", position);
+                bundle.putString("id", mIds.get((int)id));
                 fragment.setArguments(bundle);
-                ft.addToBackStack(null);
+
                 ft.commit();
             }
         });
@@ -101,6 +113,7 @@ public class ListFragment extends Fragment {
 
                             //Calling method getStudents to get the students from the JSON Array
                             getNames(result);
+                            getIds(result);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -136,4 +149,20 @@ public class ListFragment extends Fragment {
 
         mList.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, mNames));
     }
+
+    private void getIds(JSONArray j){
+        //Traversing through all the items in the json array
+        for(int i=0;i<j.length();i++){
+            try {
+                //Getting json object
+                JSONObject json = j.getJSONObject(i);
+
+                //Adding the name of the student to array list
+                mIds.add(json.getString("exhibition_id"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

@@ -39,11 +39,11 @@ public class ProjectFragment extends Fragment {
     private TextView textStudents;
     private TextView textIntroduction;
     private ImageView imgView;
-    private int id;
+    private String id;
     private String name;
     private JSONArray result;
     private SQLiteManager DB = null;
-    private ImageManager Img = null;
+    private ImageManager Img = new ImageManager();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,9 +55,9 @@ public class ProjectFragment extends Fragment {
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            id = bundle.getInt("id") + 1;
+            id = bundle.getString("id");
         }
-        getData(String.valueOf(id));
+        getData(id);
 
         return view;
     }
@@ -135,11 +135,9 @@ public class ProjectFragment extends Fragment {
 
                 textStudents.setText("鄭皓澤、馮禹德");
                 int img = getResources().getIdentifier("com.example.lai.project3:drawable/" + json.getString("img_path"), null, null);
-                //Img.decodeSampledBitmapFromResource(getResources(), img, 100, 100);
+                Img.decodeSampledBitmapFromResource(getResources(), img, 100, 100);
                 imgView.setImageBitmap(Img.decodeSampledBitmapFromResource(getResources(), img, 100, 100));
-                /*
-                listItem.add(json.getString("img_path"));
-                */
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -23,10 +23,12 @@ public class MapFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_map, container, false);
+        getActivity().setTitle(R.string.map_name);
 
         findView();
 
         readHtmlFormAssets();
+
         mWebViewMap.setWebViewClient(new WebViewClient(){
             public void onPageFinished(WebView view, String url){
                 mWebViewMap.loadUrl("javascript:refreshPoint(10, 10)");
