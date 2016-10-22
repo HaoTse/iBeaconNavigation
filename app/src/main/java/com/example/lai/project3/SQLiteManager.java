@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by lai on 2016/10/16.
@@ -40,7 +41,7 @@ public class SQLiteManager extends SQLiteOpenHelper {
                 + NAME + " VARCHAR(50))";
 
         db.execSQL(createTable);
-
+        Log.i("sqlite", "create success");
 
     }
 
@@ -53,8 +54,14 @@ public class SQLiteManager extends SQLiteOpenHelper {
         return  db.query(INFO_TABLE, new String[] {_ID, PROJ_ID, NAME}, null, null, null, null, null);
     }
 
+    public void insert(SQLiteDatabase db, String id, String name){
+        Log.i("insert", id);
+        db.execSQL("INSERT INTO favorite_table (proj_id, name) VALUES(" + id + ", '" + name + "')");
+    }
+
     public void delete(SQLiteDatabase db, String id){
-        db.execSQL("delete from favorite_table"+" where proj_id='"+id+"'");
+        Log.i("delete", id);
+        db.execSQL("DELETE FROM favorite_table WHERE proj_id="+id);
     }
 
 }

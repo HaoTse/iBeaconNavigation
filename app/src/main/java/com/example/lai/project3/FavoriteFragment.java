@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -27,10 +30,12 @@ public class FavoriteFragment extends Fragment {
     private ArrayList<String> mNames;
     private ArrayList<String> mIds;
     private ListView mList;
-
+    private int size = 0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+
         view = inflater.inflate(R.layout.fragment_favorite, container, false);
         mNames = new ArrayList<>();
         mIds = new ArrayList<>();
@@ -58,6 +63,27 @@ public class FavoriteFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_favorite, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_edit:
+                if(size > 0) {
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    Fragment fragment = new DeleteListFragment();
+                    ft.replace(R.id.layout_fragment, fragment);
+                    ft.commit();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void findView(){
         mList = (ListView)view.findViewById(R.id.list_view2);
     }
@@ -77,26 +103,17 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void show(){
-        ArrayList<HashMap<String, Object>> Item = new ArrayList<>();
         Cursor cursor = DB.getInfo(DB.getReadableDatabase());
+        size = cursor.getCount();
         if(cursor.getCount() > 0) {
             cursor.moveToFirst();
-            while (cursor.moveToNext()) {
-                HashMap<String, Object> map = new HashMap<>();
-                map.put("ItemName", cursor.getString(2));
-                map.put("ItemButton", R.drawable.ic_remove);
-                Item.add(map);
+            do{
+                mNames.add(cursor.getString(2));
                 /* record id */
                 mIds.add(cursor.getString(1));
             }
-            ListAdapter adapter = new ListAdapter(
-                    getActivity(),
-                    Item,
-                    R.layout.list_adapter,
-                    new String[] {"ItemName", "ItemButton"},
-                    new int[] {R.id.ItemName,R.id.ItemButton}
-            );
-            mList.setAdapter(adapter);
+            while (cursor.moveToNext());
+            mList.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, mNames));
         }
     }
 

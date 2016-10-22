@@ -160,22 +160,32 @@ public class ProjectFragment extends Fragment {
     private void add(String id, String name){
         Cursor cursor = DB.getInfo(DB.getReadableDatabase());
         int repeat = 0;
-        Log.i("show", "111");
         if(cursor.getCount() > 0) {
             cursor.moveToFirst();
-            while (cursor.moveToNext()) {
+            do {
+                Log.i("proj_name", cursor.getString(2));
+                Log.i("proj_id", cursor.getString(1));
+            }
+            while (cursor.moveToNext());
+            cursor.moveToFirst();
+            do{
                 if(cursor.getString(1).equals(id)){
                     repeat = 1;
                     break;
                 }
             }
+            while (cursor.moveToNext());
         }
         if(repeat == 0) {
             SQLiteDatabase db = DB.getWritableDatabase();
-            ContentValues values = new ContentValues();
+            DB.insert(db, id, name);
+            Log.i("add", id);
+            Log.i("add", name);
+            Log.i("add", "ok");
+            /*ContentValues values = new ContentValues();
             values.put("proj_id", id);
             values.put("name", name);
-            db.insert("favorite_table", null, values);
+            db.insert("favorite_table", null, values);*/
         }
     }
 
