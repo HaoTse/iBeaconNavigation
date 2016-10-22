@@ -1,6 +1,7 @@
 package com.example.lai.project3;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 
 /**
  * Created by lai on 2016/10/15.
@@ -17,6 +19,7 @@ import android.webkit.WebViewClient;
 
 public class MapFragment extends Fragment{
     private View view;
+    private Button locate_btn;
     private WebView mWebViewMap;
 
     @Override
@@ -32,6 +35,21 @@ public class MapFragment extends Fragment{
         mWebViewMap.setWebViewClient(new WebViewClient(){
             public void onPageFinished(WebView view, String url){
                 mWebViewMap.loadUrl("javascript:refreshPoint(10, 10)");
+            }
+        });
+
+        locate_btn = (Button)view.findViewById(R.id.locate_btn);
+
+        locate_btn.setOnClickListener(new Button.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+                // TODO Auto-generated method stub
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                Fragment fragment = new ScanFragment();
+                ft.replace(R.id.layout_fragment, fragment);
+                ft.commit();
+
             }
         });
 
