@@ -13,6 +13,7 @@
     <string name="menu_add">加到最愛</string>
     <string name="menu_rate">評分</string>
     <string name="btn_description">評分</string>
+    <string name="proj_intro">簡介</string>
 
     <string name="locate_btn">定位</string>
     <string name="ble_not_supported">BLE not supported on this device.</string>

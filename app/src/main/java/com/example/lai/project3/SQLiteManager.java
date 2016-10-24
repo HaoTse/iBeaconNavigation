@@ -41,6 +41,7 @@ public class SQLiteManager extends SQLiteOpenHelper {
                 + NAME + " VARCHAR(50))";
 
         db.execSQL(createTable);
+
         Log.i("sqlite", "create success");
 
     }
