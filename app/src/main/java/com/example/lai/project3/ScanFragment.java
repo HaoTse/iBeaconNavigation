@@ -1,10 +1,12 @@
 package com.example.lai.project3;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -12,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +28,20 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Timer;
 
 /**
@@ -39,6 +55,8 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
     private Handler mHandler;
     private boolean mIsScanning;
 
+    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
+
     //timer
     Timer tmr;
     //JSON URL
@@ -51,9 +69,9 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
     // Stops scanning after 8 seconds.
     private static final long SCAN_PERIOD = 8000;
     private static int count = 0;
-    private double[] x_array = new double[3];
-    private double[] y_array = new double[3];
-    private double[] r = new double[3];
+    private double[] x_array = new double[21];
+    private double[] y_array = new double[21];
+    private double[] r = new double[21];
     double x;
     double y;
 
@@ -65,9 +83,27 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
         view = inflater.inflate(R.layout.activity_scan, container, false);
         getActivity().setTitle(R.string.navigation_name);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Android M Permission check
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
+            }
+        }
+
         init();
 
         return view;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_COARSE_LOCATION:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // TODO request success
+                }
+                break;
+        }
     }
 
     @Override
@@ -88,6 +124,103 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
         super.onPause();
 
         stopScan();
+    }
+
+    private void fetchDataFromMysqlToSQLite(){
+        //Creating a string request
+        Log.i("wtf","wtf");
+        StringRequest stringRequest = new StringRequest(DATA_URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        Log.i("wtf","wtf");
+                        try {
+                            JSONArray jsonArray = new JSONArray(response);
+                            Log.i("wtf","wtf");
+                            Log.i("json",jsonArray.toString());
+                            //開啟手機資料庫
+                            SQLiteDB mSQLiteDB = new SQLiteDB(getActivity());
+                            for(int i=0;i<jsonArray.length();i++){
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                int name1 = jsonObject.getInt("E0:E5:CF:32:29:EC");
+                                int name2 = jsonObject.getInt("F4:B8:5E:B2:E8:27");
+                                int name3 = jsonObject.getInt("F4:B8:5E:B2:E8:05");
+                                int name4 = jsonObject.getInt("12:3B:6A:1A:7E:0A");
+                                int name5 = jsonObject.getInt("12:3B:6A:1A:7D:E7");
+                                int name6 = jsonObject.getInt("12:3B:6A:1A:7C:6F");
+                                double x_coordinate = jsonObject.getDouble("x");
+                                double y_coordinate = jsonObject.getDouble("y");
+                                Log.i("ss",String.valueOf(x_coordinate));
+                                Log.i("ss",String.valueOf(y_coordinate));
+                                mSQLiteDB.insert(name1,name2,name3,name4,name5,name6,x_coordinate,y_coordinate);
+                            }
+                            mSQLiteDB.close();
+                        } catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener(){
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+        //Creating a request queue
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        //Adding request to the queue
+        requestQueue.add(stringRequest);
+
+    }
+
+    private void test_locate(){
+        stopScan();
+        Double[] l = new Double[21];
+        HashMap<Double,Integer> hashMap = new HashMap<Double, Integer>();
+        SQLiteDB mSQLiteDB = new SQLiteDB(getActivity());
+        SQLiteDatabase db = mSQLiteDB.getReadableDatabase();
+        Cursor mCursor;
+        int i,j;
+        for(i=0;i<21;i++)
+            l[i] = 0.0;
+        for(i=1;i<=20;i++){
+            for(j=0;j<6;j++){
+                int rssi = mDeviceAdapter.getItem(j).getRssi();
+                String dev = "B";
+                String beacon = dev.concat(mDeviceAdapter.getItem(j).getDevice().getAddress().replace(":",""));
+                mCursor = db.rawQuery("SELECT" + "`" + beacon + "`" + "FROM detect_beacon WHERE _id=" + Integer.toString(i) ,null);
+                Log.i("88",beacon);
+                if(mCursor.moveToFirst()){
+                    do{
+                        l[i] += Math.pow(Math.abs(Integer.parseInt(mCursor.getString(0))-rssi),2);
+                    }while (mCursor.moveToNext());
+                }
+                mCursor.close();
+            }
+            mCursor = db.rawQuery("SELECT x,y FROM detect_beacon WHERE _id=" + Integer.toString(i),null);
+            if(mCursor.moveToFirst()){
+                do{
+                    x_array[i] = Double.parseDouble(mCursor.getString(0));
+                    y_array[i] = Double.parseDouble(mCursor.getString(1));
+                }while (mCursor.moveToNext());
+            }
+            mCursor.close();
+            l[i] = Math.sqrt(l[i]);
+            Log.i("dis",Double.toString(l[i]));
+            hashMap.put(l[i],i);
+        }
+        Arrays.sort(l, Collections.reverseOrder());
+        int x=0,y=0;
+        for(int k=0;k<4;k++){
+            x += x_array[hashMap.get(l[k])];
+            y += y_array[hashMap.get(l[k])];
+            Log.i("num",Integer.toString(hashMap.get(l[k])));
+        }
+        double new_x = x / 4;
+        double new_y = y / 4;
+        Log.i("newx",Double.toString(new_x));
+        Log.i("newy",Double.toString(new_y));
     }
 
 
@@ -176,6 +309,7 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
                 new ArrayList<ScannedDevice>());
         deviceListView.setAdapter(mDeviceAdapter);
         mHandler = new Handler();
+
         startScan();
     }
 

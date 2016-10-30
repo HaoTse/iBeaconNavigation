@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package youten.redo.ble.ibeacondetector;
+package com.example.lai.project3;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,8 +22,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import youten.redo.ble.util.ScannedDevice;
 
 import android.Manifest;
 import android.app.Activity;
@@ -137,13 +135,13 @@ public class ScanActivity extends Activity implements BluetoothAdapter.LeScanCal
         stopScan();
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
-    }
+    }*/
 
-    @Override
+    /*@Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (mIsScanning) {
             menu.findItem(R.id.action_scan).setVisible(false);
@@ -157,10 +155,10 @@ public class ScanActivity extends Activity implements BluetoothAdapter.LeScanCal
             menu.findItem(R.id.action_scan).setEnabled(false);
         }
         return super.onPrepareOptionsMenu(menu);
-    }
+    }*/
 
     @SuppressWarnings("unchecked")
-    @Override
+    /*@Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == android.R.id.home) {
@@ -186,7 +184,7 @@ public class ScanActivity extends Activity implements BluetoothAdapter.LeScanCal
             return true;
         }
         return super.onMenuItemSelected(featureId, item);
-    }
+    }*/
 
     @Override
     public void onLeScan(final BluetoothDevice newDeivce, final int newRssi,

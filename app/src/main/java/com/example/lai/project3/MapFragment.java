@@ -2,6 +2,7 @@ package com.example.lai.project3;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -49,6 +50,7 @@ public class MapFragment extends Fragment{
                 Fragment fragment = new ScanFragment();
                 ft.replace(R.id.layout_fragment, fragment);
                 ft.commit();
+
 
             }
         });
