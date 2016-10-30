@@ -2,7 +2,6 @@ package com.example.lai.project3;
 
 import android.Manifest;
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
@@ -19,12 +18,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -47,9 +44,9 @@ import java.util.Timer;
 /**
  * Created by Dennis on 2016/10/23.
  **/
+
 public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCallback{
     private View view;
-    private Button locate_btn;
     private BluetoothAdapter mBTAdapter;
     private DeviceAdapter mDeviceAdapter;
     private Handler mHandler;
@@ -59,11 +56,11 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
 
     //timer
     Timer tmr;
+
     //JSON URL
     public static final String DATA_URL = "http://192.168.1.23/beacon_connect/getBeaconLocation.php";
 
     private WebView mWebViewMap;
-    //net.macdidi.webviewtest.JavaScriptInterface mJavaScriptInterface;
 
     private static final int REQUEST_ENABLE_BT = 1;
     // Stops scanning after 8 seconds.
@@ -316,15 +313,6 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
     private void startScan() {
         if ((mBTAdapter != null) && (!mIsScanning)) {
             // Stops scanning after a pre-defined scan period.
-            /*mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mIsScanning = false;
-                    mBTAdapter.stopLeScan(ScanActivity.this);
-                    setProgressBarIndeterminateVisibility(false);
-                    invalidateOptionsMenu();
-                }
-            }, SCAN_PERIOD);*/
             mBTAdapter.startLeScan(this);
             mIsScanning = true;
             //tmr = new Timer();
@@ -348,12 +336,10 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
 
     }
 
-    // 读取SVG文件方法
+    //read svg
     private void readHtmlFormAssets() {
         mWebViewMap.setWebChromeClient(new WebChromeClient());
         mWebViewMap.setWebViewClient(new WebViewClient());
-        //mJavaScriptInterface = new net.macdidi.webviewtest.JavaScriptInterface(ScanActivity.this);
-        //mWebViewMap.addJavascriptInterface(mJavaScriptInterface, "Android");
         mWebViewMap.setHorizontalScrollBarEnabled(false);
         mWebViewMap.setVerticalScrollBarEnabled(false);
         mWebViewMap.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -361,7 +347,8 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
 
         WebSettings websettings = mWebViewMap.getSettings();
         websettings.setJavaScriptEnabled(true);
-        websettings.setSupportZoom(false);  // do not remove this
+        websettings.setSupportZoom(true);  // do not remove this
+        websettings.setBuiltInZoomControls(true);
         websettings.setAllowFileAccessFromFileURLs(true); // do not remove this
         websettings.setSupportMultipleWindows(false);
         websettings.setJavaScriptCanOpenWindowsAutomatically(false);

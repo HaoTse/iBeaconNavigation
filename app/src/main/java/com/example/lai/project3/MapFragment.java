@@ -30,7 +30,6 @@ public class MapFragment extends Fragment{
         getActivity().setTitle(R.string.map_name);
 
         findView();
-
         readHtmlFormAssets();
 
         mWebViewMap.setWebViewClient(new WebViewClient(){
@@ -66,8 +65,6 @@ public class MapFragment extends Fragment{
     private void readHtmlFormAssets() {
         mWebViewMap.setWebChromeClient(new WebChromeClient());
         mWebViewMap.setWebViewClient(new WebViewClient());
-        //mJavaScriptInterface = new net.macdidi.webviewtest.JavaScriptInterface(ScanActivity.this);
-        //mWebViewMap.addJavascriptInterface(mJavaScriptInterface, "Android");
         mWebViewMap.setHorizontalScrollBarEnabled(false);
         mWebViewMap.setVerticalScrollBarEnabled(false);
         mWebViewMap.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -75,8 +72,10 @@ public class MapFragment extends Fragment{
 
         WebSettings websettings = mWebViewMap.getSettings();
         websettings.setJavaScriptEnabled(true);
-        websettings.setSupportZoom(false);  // do not remove this
-        websettings.setAllowFileAccessFromFileURLs(true); // do not remove this
+        websettings.setSupportZoom(true);
+        websettings.setBuiltInZoomControls(true);
+        websettings.setDisplayZoomControls(false);
+        websettings.setAllowFileAccessFromFileURLs(true);
         websettings.setSupportMultipleWindows(false);
         websettings.setJavaScriptCanOpenWindowsAutomatically(false);
         websettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
