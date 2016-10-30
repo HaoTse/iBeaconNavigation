@@ -72,9 +72,12 @@ public class MapFragment extends Fragment{
 
         WebSettings websettings = mWebViewMap.getSettings();
         websettings.setJavaScriptEnabled(true);
+
+        // Set Zoom control
         websettings.setSupportZoom(true);
         websettings.setBuiltInZoomControls(true);
         websettings.setDisplayZoomControls(false);
+
         websettings.setAllowFileAccessFromFileURLs(true);
         websettings.setSupportMultipleWindows(false);
         websettings.setJavaScriptCanOpenWindowsAutomatically(false);

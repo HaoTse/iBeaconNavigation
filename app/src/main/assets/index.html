@@ -14,6 +14,7 @@
 		<style type="text/css">
 			html,body {
 				height: 100%;
+				background-color: rgba(0, 0, 0, 0.1);
 			}
 		</style>
 
@@ -27,20 +28,23 @@
 	                                                g.append( loadedFragment );
 	                                        } );
 
+				refreshPoint(10, 10);
+				
+				function refreshPoint(x, y){
+					$("#x").text(x);
+					$("#y").text(y);
+					var c = g.circle(x, y, 10);
+					g.select("circle").attr({id:"point",  fill:"red"});
+				}
+
 			});
-			function refreshPoint(x, y){
-				console.log(x);
-				var s = Snap("#svgout");
-				var g1 = s.group();
-				var c = g1.circle(x, y, 10);
-				g1.select("circle").attr({id:"point",  fill:"red"});
-			}
 
 		</script>
 	</head>
 	<body>
+		<span id="x"></span>
+		<span id="y"></span>
 		<svg id="svgout" style="width:100%; height: 100%"></svg>
-
 
 	</body>
 </html>
