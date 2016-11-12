@@ -6,7 +6,11 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +38,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 import static java.sql.Types.NULL;
@@ -43,15 +52,23 @@ import static java.sql.Types.NULL;
 
 public class ProjectFragment extends Fragment {
     private View view;
+    private TextView textTeacherTitle;
+    private TextView textStudentTitle;
     private TextView textIntroTitle;
+    private TextView textTeacher;
     private TextView textStudents;
     private TextView textIntroduction;
     private ImageView imgView;
+    private ProgressBar progress;
+    private LinearLayout panel1;
+    private LinearLayout panel2;
     private Toast toast;
     private String id;
     private String name;
     private String origin_rate;
-    private JSONArray result;
+    private JSONObject result;
+    private JSONArray result2;
+    private JSONArray rateResult;
     private SQLiteManager DB = null;
     private ImageManager Img = new ImageManager();
     private int checkRate = 0;
@@ -65,11 +82,27 @@ public class ProjectFragment extends Fragment {
         findView();
         openDB();
 
+        StrictMode
+                .setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                        .detectDiskReads()
+                        .detectDiskWrites()
+                        .detectNetwork()   // or .detectAll() for all detectable problems
+                        .penaltyLog()
+                        .build());
+        StrictMode
+                .setVmPolicy(new StrictMode.VmPolicy.Builder()
+                        .detectLeakedSqlLiteObjects()
+                        .detectLeakedClosableObjects()
+                        .penaltyLog()
+                        .penaltyDeath()
+                        .build());
+
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             id = bundle.getString("id");
         }
+        Log.i("id", id);
         getData(id);
 
         return view;
@@ -102,11 +135,17 @@ public class ProjectFragment extends Fragment {
     }
 
     private void findView(){
+        textTeacherTitle = (TextView)view.findViewById(R.id.teacher_title);
+        textStudentTitle = (TextView)view.findViewById(R.id.student_title);
         textIntroTitle = (TextView)view.findViewById(R.id.intro_title);
+        textTeacher = (TextView)view.findViewById(R.id.teacher);
         textStudents = (TextView)view.findViewById(R.id.students);
         textIntroduction = (TextView)view.findViewById(R.id.introduction);
         imgView = (ImageView)view.findViewById(R.id.imageView);
+        progress = (ProgressBar)view.findViewById(R.id.progress);
         ifRate = (TextView)view.findViewById(R.id.ifRate);
+        panel1 = (LinearLayout)view.findViewById(R.id.panel1);
+        panel2 = (LinearLayout)view.findViewById(R.id.panel2);
     }
 
     public void showDialog(){
@@ -189,11 +228,14 @@ public class ProjectFragment extends Fragment {
                         try {
                             //Parsing the fetched Json String to JSON Object
                             j = new JSONObject(response);
+                            Log.i("response", response);
 
                             //Storing the Array of JSON String to our JSON Array
-                            result = j.getJSONArray("result");
+                            result = j.getJSONObject("exhibition");
+                            result2 = j.getJSONArray("student");
+                            Log.i("json", result.toString());
 
-                            //Calling method getStudents to get the students from the JSON Array
+                            getStudents(result2);
                             getNames(result);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -214,26 +256,81 @@ public class ProjectFragment extends Fragment {
         requestQueue.add(stringRequest);
     }
 
-    private void getNames(JSONArray j){
-        //Traversing through all the items in the json array
-            try {
-                //Getting json object
-                JSONObject json = j.getJSONObject(0);
+    private void getNames(JSONObject j){
+        try {
 
-                name = json.getString("name");
-                getActivity().setTitle(name);
+            name = j.getString("name");
+            Log.i("jobj", name);
+            getActivity().setTitle(name);
 
-                textIntroTitle.setText("簡介");
-                textIntroduction.setText(json.getString("introduction"));
+            textTeacherTitle.setText(R.string.proj_teacher);
+            textTeacher.setText(j.getString("teacher"));
+/*
+            textStudentTitle.setText(R.string.proj_student);
+            textStudents.setText(json.getString("students"));*/
 
-                textStudents.setText("鄭皓澤、馮禹德");
+            textIntroTitle.setText(R.string.proj_intro);
+            textIntroduction.setText(j.getString("introduction"));
+/*
                 int img = getResources().getIdentifier("com.example.lai.project3:drawable/" + json.getString("img_path"), null, null);
                 Img.decodeSampledBitmapFromResource(getResources(), img, 100, 100);
-                imgView.setImageBitmap(Img.decodeSampledBitmapFromResource(getResources(), img, 100, 100));
+                imgView.setImageBitmap(Img.decodeSampledBitmapFromResource(getResources(), img, 100, 100));*/
 
-            } catch (JSONException e) {
-                e.printStackTrace();
+            String pic = j.getString("img_path").replace("..", "http://140.116.82.52/iBeaconNavigation");
+            Log.i("img", pic);
+            imgView.setImageBitmap(getBitmapFromURL(pic));
+
+            progress.setVisibility(View.GONE);
+            panel1.setVisibility(View.VISIBLE);
+            panel2.setVisibility(View.VISIBLE);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getStudents(JSONArray j){
+        String student = "";
+        try {
+            for (int i = 0; i < j.length(); i++) {
+                JSONObject json = j.getJSONObject(i);
+                if (j.length() == 1) {
+                    student = json.getString("name");
+                    break;
+                } else {
+                    if (i == 0) {
+                        student += json.getString("name");
+                    } else {
+                        student += "、" + json.getString("name");
+                    }
+                }
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+            Log.i("std", student);
+            textStudentTitle.setText(R.string.proj_student);
+            textStudents.setText(student);
+
+    }
+
+    public static Bitmap getBitmapFromURL(String src) {
+        try {
+            Log.e("src",src);
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            Log.e("Bitmap","returned");
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("Exception",e.getMessage());
+            return null;
+        }
     }
 
     private void getRate(String proj_id){
@@ -245,9 +342,9 @@ public class ProjectFragment extends Fragment {
                         JSONObject j = null;
                         try {
                             j = new JSONObject(response);
-                            result = j.getJSONArray("result");
+                            rateResult = j.getJSONArray("result");
                             //Getting json object
-                            JSONObject json = result.getJSONObject(0);
+                            JSONObject json = rateResult.getJSONObject(0);
                             origin_rate = json.getString("rate");
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -302,6 +399,7 @@ public class ProjectFragment extends Fragment {
             }
             while (cursor.moveToNext());
         }
+        cursor.close();
         if(repeat == 0) {
             SQLiteDatabase db = DB.getWritableDatabase();
             DB.insert(db, id, name);

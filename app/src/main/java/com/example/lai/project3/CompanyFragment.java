@@ -3,6 +3,7 @@ package com.example.lai.project3;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +37,7 @@ import java.util.ArrayList;
 public class CompanyFragment extends Fragment {
     private View view;
     private Spinner spinner;
-    private TextView textView;
+    private EditText mailText;
     private Button button;
     private JSONArray result;
     private ArrayList<String> mNames;
@@ -60,12 +62,12 @@ public class CompanyFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                // TODO Auto-generated method stub
-                Intent i = new Intent(Intent.ACTION_SEND);
-                i.setType("message/rfc822");
-                i.putExtra(Intent.EXTRA_EMAIL  , mEmails.get(spinner.getSelectedItemPosition()));
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("mailto:" + mEmails.get(spinner.getSelectedItemPosition())));
+                intent.putExtra(Intent.EXTRA_SUBJECT, "關於專題");
+                intent.putExtra(Intent.EXTRA_TEXT, mailText.getText().toString());
                 try {
-                    startActivity(Intent.createChooser(i, "Send mail..."));
+                    startActivity(Intent.createChooser(intent, "Send mail..."));
                     getActivity().finish();
                 } catch (android.content.ActivityNotFoundException ex) {
                     Toast.makeText(getActivity(), "There are no email clients installed.", Toast.LENGTH_SHORT).show();
@@ -79,7 +81,7 @@ public class CompanyFragment extends Fragment {
 
     private void findView(){
         spinner = (Spinner)view.findViewById(R.id.spinner);
-        textView = (TextView)view.findViewById(R.id.textView);
+        mailText = (EditText)view.findViewById(R.id.mailText);
         button = (Button)view.findViewById(R.id.send_button);
     }
 

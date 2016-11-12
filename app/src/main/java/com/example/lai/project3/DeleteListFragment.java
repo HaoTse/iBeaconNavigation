@@ -117,6 +117,7 @@ public class DeleteListFragment extends Fragment {
         show();
         Log.i("after delete", String.valueOf(checkedIds.size()));
         myAdapter.notifyDataSetChanged();
+        cursor.close();
     }
 
     private void show(){
@@ -159,6 +160,7 @@ public class DeleteListFragment extends Fragment {
             mList.setAdapter(myAdapter);
             mList.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
         }
+        cursor.close();
     }
 
 }

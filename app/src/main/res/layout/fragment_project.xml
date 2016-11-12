@@ -5,42 +5,129 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="185dp"
         android:orientation="vertical"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:id="@+id/panel1"
+        android:visibility="invisible"
+        android:weightSum="1">
+
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:contentDescription="@string/img_description" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center">
+            android:layout_width="match_parent"
+            android:layout_height="205dp"
+            android:maxHeight="20dp"
+            android:maxWidth="20dp"
+            android:layout_gravity="center"
+            android:background="@drawable/img_background"
+            android:contentDescription="@string/img_description"
+            android:layout_weight="0.1" />
 
-        <TextView
-            android:text=""
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:id="@+id/students" />
-        <TextView
-            android:text=""
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:id="@+id/intro_title"/>
-        <TextView
-            android:text=""
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="25sp"
-            android:id="@+id/introduction" />
     </LinearLayout>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_gravity="center"
+        android:id="@+id/progress"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="invisible"
+        android:id="@+id/panel2"
+        android:layout_weight="42.13">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="111dp"
+            android:layout_height="175dp"
+            android:maxHeight="20dp"
+            android:maxWidth="20dp"
+            android:layout_gravity="bottom"
+            android:src="@drawable/bottom3"
+            android:contentDescription="@string/img_description" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:text=""
+                    android:layout_width="205dp"
+                    android:layout_height="50dp"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textColor="@color/textColor"
+                    android:background="@drawable/title_background4"
+                    android:id="@+id/teacher_title" />
+
+                <TextView
+                    android:text=""
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:id="@+id/teacher" />
+
+                <TextView
+                    android:text=""
+                    android:layout_width="205dp"
+                    android:layout_height="50dp"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textColor="@color/textColor"
+                    android:background="@drawable/title_background3"
+                    android:id="@+id/student_title"/>
+
+                <TextView
+                    android:text=""
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:id="@+id/students" />
+
+                <TextView
+                    android:text=""
+                    android:layout_width="205dp"
+                    android:layout_height="50dp"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textColor="@color/textColor"
+                    android:background="@drawable/title_background2"
+                    android:id="@+id/intro_title"/>
+
+                    <TextView
+                        android:text=""
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:gravity="center"
+                        android:id="@+id/introduction" />
+
+            </LinearLayout>
+        </ScrollView>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="93dp"
+            android:maxHeight="20dp"
+            android:maxWidth="20dp"
+            android:layout_gravity="top"
+            android:src="@drawable/heart"
+            android:contentDescription="@string/img_description"
+            android:id="@+id/imageView4" />
+
+    </LinearLayout>
+
     <TextView android:id="@+id/ifRate"
         android:layout_width="0dp"
         android:layout_height="0dp"

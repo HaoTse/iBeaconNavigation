@@ -9,7 +9,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.ToggleButton;
 
 import com.android.volley.RequestQueue;
@@ -23,6 +25,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by lai on 2016/10/15.
@@ -35,6 +39,8 @@ public class ListFragment extends Fragment {
     private JSONArray result;
     private ArrayList<String> mNames;
     private ArrayList<String> mIds;
+    private ArrayList<String> mRates;
+    private List<HashMap<String , String>> list;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,6 +49,8 @@ public class ListFragment extends Fragment {
 
         mNames = new ArrayList<>();
         mIds = new ArrayList<>();
+        mRates = new ArrayList<>();
+        list = new ArrayList<>();
 
         getActivity().setTitle(R.string.list_name);
 
@@ -57,10 +65,14 @@ public class ListFragment extends Fragment {
                 if(isChecked){
                     mNames.clear();
                     mIds.clear();
+                    mRates.clear();
+                    list.clear();
                     getData(1);
                 } else{
                     mNames.clear();
                     mIds.clear();
+                    mRates.clear();
+                    list.clear();
                     getData(0);
                 }
             }
@@ -113,7 +125,9 @@ public class ListFragment extends Fragment {
 
                             //Calling method getStudents to get the students from the JSON Array
                             getNames(result);
+                            getRates(result);
                             getIds(result);
+                            setList();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -146,8 +160,6 @@ public class ListFragment extends Fragment {
                 e.printStackTrace();
             }
         }
-
-        mList.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, mNames));
     }
 
     private void getIds(JSONArray j){
@@ -164,5 +176,42 @@ public class ListFragment extends Fragment {
             }
         }
     }
+
+    private void getRates(JSONArray j){
+        for(int i=0;i<j.length();i++){
+            try {
+                JSONObject json = j.getJSONObject(i);
+                String r = json.getString("rate");
+                if(r.equals("-1"))
+                    mRates.add("目前還沒有評分");
+                else
+                    mRates.add(json.getString("rate"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void setList(){
+        for(int i = 0 ; i < mNames.size() ; i++){
+            HashMap<String , String> hashMap = new HashMap<>();
+            hashMap.put("name" , mNames.get(i));
+            hashMap.put("rate" , mRates.get(i));
+            //把title , text存入HashMap之中
+            list.add(hashMap);
+            //把HashMap存入list之中
+        }
+
+        ListAdapter listAdapter = new SimpleAdapter(
+                getActivity(),
+                list,
+                android.R.layout.simple_list_item_2 ,
+                new String[]{"name" , "rate"} ,
+                new int[]{android.R.id.text1 , android.R.id.text2});
+        // 5個參數 : context , List , layout , key1 & key2 , text1 & text2
+
+        mList.setAdapter(listAdapter);
+    }
+
 
 }
