@@ -15,7 +15,6 @@
         android:layout_weight="1"
         android:background="@color/background"/>
 
-
     <com.roughike.bottombar.BottomBar
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"

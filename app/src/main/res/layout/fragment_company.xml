@@ -33,6 +33,7 @@
             <EditText
                 android:layout_width="233dp"
                 android:layout_height="120dp"
+                android:hint="@string/company_hint"
                 android:inputType="textMultiLine"
                 android:id="@+id/mailText"/>
 

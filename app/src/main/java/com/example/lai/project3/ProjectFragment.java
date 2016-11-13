@@ -68,11 +68,9 @@ public class ProjectFragment extends Fragment {
     private String origin_rate;
     private JSONObject result;
     private JSONArray result2;
-    private JSONArray rateResult;
+    private JSONObject rateResult;
     private SQLiteManager DB = null;
-    private ImageManager Img = new ImageManager();
     private int checkRate = 0;
-    private TextView ifRate;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -143,7 +141,6 @@ public class ProjectFragment extends Fragment {
         textIntroduction = (TextView)view.findViewById(R.id.introduction);
         imgView = (ImageView)view.findViewById(R.id.imageView);
         progress = (ProgressBar)view.findViewById(R.id.progress);
-        ifRate = (TextView)view.findViewById(R.id.ifRate);
         panel1 = (LinearLayout)view.findViewById(R.id.panel1);
         panel2 = (LinearLayout)view.findViewById(R.id.panel2);
     }
@@ -226,11 +223,9 @@ public class ProjectFragment extends Fragment {
                     public void onResponse(String response) {
                         JSONObject j = null;
                         try {
-                            //Parsing the fetched Json String to JSON Object
                             j = new JSONObject(response);
                             Log.i("response", response);
 
-                            //Storing the Array of JSON String to our JSON Array
                             result = j.getJSONObject("exhibition");
                             result2 = j.getJSONArray("student");
                             Log.i("json", result.toString());
@@ -265,16 +260,13 @@ public class ProjectFragment extends Fragment {
 
             textTeacherTitle.setText(R.string.proj_teacher);
             textTeacher.setText(j.getString("teacher"));
-/*
-            textStudentTitle.setText(R.string.proj_student);
-            textStudents.setText(json.getString("students"));*/
 
             textIntroTitle.setText(R.string.proj_intro);
             textIntroduction.setText(j.getString("introduction"));
 /*
-                int img = getResources().getIdentifier("com.example.lai.project3:drawable/" + json.getString("img_path"), null, null);
-                Img.decodeSampledBitmapFromResource(getResources(), img, 100, 100);
-                imgView.setImageBitmap(Img.decodeSampledBitmapFromResource(getResources(), img, 100, 100));*/
+            int img = getResources().getIdentifier("com.example.lai.project3:drawable/" + json.getString("img_path"), null, null);
+            Img.decodeSampledBitmapFromResource(getResources(), img, 100, 100);
+            imgView.setImageBitmap(Img.decodeSampledBitmapFromResource(getResources(), img, 100, 100));*/
 
             String pic = j.getString("img_path").replace("..", "http://140.116.82.52/iBeaconNavigation");
             Log.i("img", pic);
@@ -309,7 +301,6 @@ public class ProjectFragment extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-            Log.i("std", student);
             textStudentTitle.setText(R.string.proj_student);
             textStudents.setText(student);
 
@@ -342,10 +333,11 @@ public class ProjectFragment extends Fragment {
                         JSONObject j = null;
                         try {
                             j = new JSONObject(response);
-                            rateResult = j.getJSONArray("result");
-                            //Getting json object
-                            JSONObject json = rateResult.getJSONObject(0);
-                            origin_rate = json.getString("rate");
+                            rateResult = j.getJSONObject("exhibition");
+                            Log.i("rate_json", rateResult.toString());
+                            //Get
+                            origin_rate = rateResult.getString("rate");
+                            Log.i("origin", origin_rate);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -414,12 +406,30 @@ public class ProjectFragment extends Fragment {
     }
 
     private void checkIfRated() {
-        checkRate = Integer.parseInt(ifRate.getText().toString());
-        Log.i("check", String.valueOf(checkRate));
+        Log.i("checkifrate", "infunction");
+        Cursor cursor = DB.ifRated(DB.getReadableDatabase());
+        if(cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            do{
+                if(cursor.getString(0).equals("0")){
+                    checkRate = 0;
+                    Log.i("check", "0");
+                    break;
+                } else{
+                    checkRate = 1;
+                    Log.i("check", "1");
+                    break;
+
+                }
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
     }
 
     private void Rated(){
-        ifRate.setText("1");
+        SQLiteDatabase db = DB.getWritableDatabase();
+        DB.rated(db);
     }
 
 }

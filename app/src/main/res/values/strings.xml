@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">專題導覽</string>
     <string name="company_name">聯絡廠商</string>
+    <string name="company_hint">寫下您的意見吧</string>
     <string name="favorite_name">我的最愛</string>
     <string name="list_name">專題列表</string>
     <string name="map_name">分佈圖</string>

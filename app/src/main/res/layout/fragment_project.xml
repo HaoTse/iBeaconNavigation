@@ -127,10 +127,4 @@
             android:id="@+id/imageView4" />
 
     </LinearLayout>
-
-    <TextView android:id="@+id/ifRate"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="0"
-        android:visibility="invisible"/>
 </LinearLayout>
