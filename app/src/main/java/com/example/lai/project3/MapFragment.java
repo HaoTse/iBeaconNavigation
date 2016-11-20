@@ -34,7 +34,6 @@ public class MapFragment extends Fragment{
 
         mWebViewMap.setWebViewClient(new WebViewClient(){
             public void onPageFinished(WebView view, String url){
-                mWebViewMap.loadUrl("javascript:refreshPoint(10, 10)");
             }
         });
 

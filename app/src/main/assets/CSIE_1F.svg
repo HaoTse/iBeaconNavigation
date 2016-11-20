@@ -1,5 +1,5 @@
 <?xml version="1.0" standalone="no"?>
-<svg id="map" viewBox="0 0 1024 768" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" stroke-linecap="round" stroke-linejoin="round" fill-rule="evenodd" xml:space="preserve" fill="rgba(0, 0, 0, 0.1)">
+<svg id="map" viewBox="0 0 1024 768" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" stroke-linecap="round" stroke-linejoin="round" fill-rule="evenodd" xml:space="preserve" fill="#FFFFCE">
 	<defs >
 		<clipPath id="clipId0" >
 			<path d="M0,768 1024,768 1024,0 0,0 z" />
@@ -9,7 +9,7 @@
 	<g id="AutoLayers">
 		<g id="0">
 			<g stroke-width="0.1" clip-path="url(#clipId0)" fill="none" stroke="rgb(0,0,0)" />
-			<g stroke-width="0.25" clip-path="url(#clipId0)" fill="none" stroke="rgb(0,0,0)" >
+			<g stroke-width="0.25" clip-path="url(#clipId0)" fill="none" stroke="#ae2512" >
 				<polyline points="148.124,423.383 465.686,423.356 " />
 				<polyline points="498.594,423.353 509.618,423.352 " />
 				<polyline points="148.124,420.093 465.686,420.066 " />
