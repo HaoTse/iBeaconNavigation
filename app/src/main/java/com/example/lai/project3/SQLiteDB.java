@@ -23,19 +23,31 @@ public class SQLiteDB extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db){
         //建立db的Table與Table裡的欄位項目
-        String TABLE = "CREATE TABLE " + "detect_beacon" + " ("
-                + "_id"  + " INTEGER primary key autoincrement, "
-                + "BE0E5CF3229EC" + " INT , "
-                + "BF4B85EB2E827" + " INT , "
-                + "BF4B85EB2E805" + " INT , "
-                + "B123B6A1A7E0A" + " INT , "
-                + "B123B6A1A7DE7" + " INT , "
-                + "B123B6A1A7C6F" + " INT , "
+        String TABLE = "CREATE TABLE " + "ibeacon" + " ("
+                + "beacon_id"  + " INT, "
+                + "mac_addr" + " VARCHAR(21) , "
+                + "name" + " VARCHAR(21) , "
                 + "x" + " DOUBLE , "
                 + "y" + " DOUBLE "
                 + ")";
 
         db.execSQL(TABLE);
+
+        String TABLE2 = "CREATE TABLE " + "detect_point" + " ("
+                + "point_id"  + " INT, "
+                + "x" + " DOUBLE , "
+                + "y" + " DOUBLE "
+                + ")";
+
+        db.execSQL(TABLE2);
+
+        String TABLE3 = "CREATE TABLE " + "point_info" + " ("
+                + "point_id" + " INT , "
+                + "beacon_id" + " INT , "
+                + "rssi" + " INT "
+                + ")";
+
+        db.execSQL(TABLE3);
     }
 
     @Override
@@ -43,47 +55,42 @@ public class SQLiteDB extends SQLiteOpenHelper{
     {
     }
 
-    //指標，db指向sqldb的Table
-    public Cursor select()
-    {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query("detect_beacon", null, null, null, null, null, null);
-        return cursor;
-    }
-
     //新增db Table內容
-    public long insert(int name1, int name2, int name3,
-                       int name4, int name5, int name6,
+    public long insert(int beacon_id,String mac_addr, String name,
                        double x, double y)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put("BE0E5CF3229EC", name1);
-        cv.put("BF4B85EB2E827", name2);
-        cv.put("BF4B85EB2E805", name3);
-        cv.put("B123B6A1A7E0A", name4);
-        cv.put("B123B6A1A7DE7", name5);
-        cv.put("B123B6A1A7C6F", name6);
-        Log.i("name3",Integer.toString(name3));
+        cv.put("beacon_id",beacon_id);
+        cv.put("mac_addr", mac_addr);
+        cv.put("name", name);
         cv.put("x", x);
         cv.put("y", y);
-        long row = db.insert("detect_beacon", null, cv);
+        long row = db.insert("ibeacon", null, cv);
+        Log.i("cv",cv.toString());
+        return row;
+    }
+    public long insert2(int point_id,double x, double y)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("point_id",point_id);
+        cv.put("x", x);
+        cv.put("y", y);
+        long row = db.insert("detect_point", null, cv);
+        Log.i("cv",cv.toString());
+        return row;
+    }
+    public long insert3(int point_id, int beacon_id, int rssi)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("point_id", point_id);
+        cv.put("beacon_id", beacon_id);
+        cv.put("rssi", rssi);
+        long row = db.insert("point_info", null, cv);
         Log.i("cv",cv.toString());
         return row;
     }
 
-    //刪除Table單筆資料，帶入id
-    public void delete(int id)
-    {
-        SQLiteDatabase db = this.getWritableDatabase();
-        String where = "id" + " = " + Integer.toString(id);
-        db.delete("detect_beacon", where, null);
-    }
-
-    //刪除Table全部資料
-    public void deleteAll()
-    {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM " + " detect_beacon" );
-    }
 }

@@ -1,6 +1,7 @@
 package com.example.lai.project3;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -39,7 +40,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Dennis on 2016/10/23.
@@ -58,14 +62,13 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
     Timer tmr;
 
     //JSON URL
-    public static final String DATA_URL = "http://192.168.1.23/beacon_connect/getBeaconLocation.php";
+    public static final String DATA_URL = "http://140.116.82.52/getBeaconLocation.php";
 
     private WebView mWebViewMap;
 
     private static final int REQUEST_ENABLE_BT = 1;
     // Stops scanning after 8 seconds.
     private static final long SCAN_PERIOD = 8000;
-    private static int count = 0;
     private double[] x_array = new double[21];
     private double[] y_array = new double[21];
     private double[] r = new double[21];
@@ -79,16 +82,16 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
         //getActivity().requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         view = inflater.inflate(R.layout.activity_scan, container, false);
         getActivity().setTitle(R.string.navigation_name);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Android M Permission check
             if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
             }
         }
-
         init();
-
+        fetchDataFromMysqlToSQLite();
+        tmr = new Timer();
+        tmr.schedule(new test_locate(),5000,2000);
         return view;
     }
 
@@ -119,38 +122,44 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
     @Override
     public void onPause() {
         super.onPause();
-
         stopScan();
     }
 
     private void fetchDataFromMysqlToSQLite(){
         //Creating a string request
-        Log.i("wtf","wtf");
         StringRequest stringRequest = new StringRequest(DATA_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
-                        Log.i("wtf","wtf");
                         try {
-                            JSONArray jsonArray = new JSONArray(response);
-                            Log.i("wtf","wtf");
-                            Log.i("json",jsonArray.toString());
+                            JSONObject json = new JSONObject(response);
+                            JSONArray j = json.getJSONArray("output");
+                            JSONArray jj = json.getJSONArray("output2");
+                            JSONArray jjj = json.getJSONArray("output3");
                             //開啟手機資料庫
                             SQLiteDB mSQLiteDB = new SQLiteDB(getActivity());
-                            for(int i=0;i<jsonArray.length();i++){
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                int name1 = jsonObject.getInt("E0:E5:CF:32:29:EC");
-                                int name2 = jsonObject.getInt("F4:B8:5E:B2:E8:27");
-                                int name3 = jsonObject.getInt("F4:B8:5E:B2:E8:05");
-                                int name4 = jsonObject.getInt("12:3B:6A:1A:7E:0A");
-                                int name5 = jsonObject.getInt("12:3B:6A:1A:7D:E7");
-                                int name6 = jsonObject.getInt("12:3B:6A:1A:7C:6F");
+                            for(int i=0;i<j.length();i++){
+                                JSONObject jsonObject = j.getJSONObject(i);
+                                int beacon_id = jsonObject.getInt("beacon_id");
+                                String mac_addr = jsonObject.getString("mac_addr");
+                                String name = jsonObject.getString("name");
                                 double x_coordinate = jsonObject.getDouble("x");
                                 double y_coordinate = jsonObject.getDouble("y");
-                                Log.i("ss",String.valueOf(x_coordinate));
-                                Log.i("ss",String.valueOf(y_coordinate));
-                                mSQLiteDB.insert(name1,name2,name3,name4,name5,name6,x_coordinate,y_coordinate);
+                                mSQLiteDB.insert(beacon_id,mac_addr,name,x_coordinate,y_coordinate);
+                            }
+                            for(int i=0;i<jj.length();i++){
+                                JSONObject jsonObject = jj.getJSONObject(i);
+                                int point_id = jsonObject.getInt("point_id");
+                                int beacon_id = jsonObject.getInt("beacon_id");
+                                int rssi = jsonObject.getInt("rssi");
+                                mSQLiteDB.insert3(point_id,beacon_id,rssi);
+                            }
+                            for(int i=0;i<jjj.length();i++){
+                                JSONObject jsonObject = jjj.getJSONObject(i);
+                                int point_id = jsonObject.getInt("point_id");
+                                double x = jsonObject.getDouble("x");
+                                double y = jsonObject.getDouble("y");
+                                mSQLiteDB.insert2(point_id,x,y);
                             }
                             mSQLiteDB.close();
                         } catch (JSONException e){
@@ -168,104 +177,88 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         //Adding request to the queue
         requestQueue.add(stringRequest);
-
     }
 
-    private void test_locate(){
-        stopScan();
-        Double[] l = new Double[21];
-        HashMap<Double,Integer> hashMap = new HashMap<Double, Integer>();
-        SQLiteDB mSQLiteDB = new SQLiteDB(getActivity());
-        SQLiteDatabase db = mSQLiteDB.getReadableDatabase();
-        Cursor mCursor;
-        int i,j;
-        for(i=0;i<21;i++)
-            l[i] = 0.0;
-        for(i=1;i<=20;i++){
-            for(j=0;j<6;j++){
-                int rssi = mDeviceAdapter.getItem(j).getRssi();
-                String dev = "B";
-                String beacon = dev.concat(mDeviceAdapter.getItem(j).getDevice().getAddress().replace(":",""));
-                mCursor = db.rawQuery("SELECT" + "`" + beacon + "`" + "FROM detect_beacon WHERE _id=" + Integer.toString(i) ,null);
-                Log.i("88",beacon);
-                if(mCursor.moveToFirst()){
-                    do{
-                        l[i] += Math.pow(Math.abs(Integer.parseInt(mCursor.getString(0))-rssi),2);
-                    }while (mCursor.moveToNext());
+    public class test_locate extends TimerTask {
+        @Override
+        public void run () {
+            HashMap<String, Integer> map = new HashMap<String, Integer>();
+            for (int i = 0; i < 50; i++) {
+                stopScan();
+                for (int j = 0; j < mDeviceAdapter.getCount(); j++) {
+                    int rssi = mDeviceAdapter.getItem(j).getRssi();
+                    String mac_addr = mDeviceAdapter.getItem(j).getDevice().getAddress().replace(":", "");
+                    if (i != 0)
+                        map.put(mac_addr, map.get(mac_addr) + rssi);
+                    else
+                        map.put(mac_addr, rssi);
+                }
+                startScan();
+            }
+            Double[] l = new Double[21];
+            HashMap<Double, Integer> hashMap = new HashMap<Double, Integer>();
+            SQLiteDB mSQLiteDB = new SQLiteDB(getActivity());
+            SQLiteDatabase db = mSQLiteDB.getReadableDatabase();
+            Cursor mCursor;
+            int i, j;
+            for (i = 0; i < 21; i++)
+                l[i] = 0.0;
+            //場域內已知點數量
+            for (i = 1; i <= 20; i++) {
+                //場域內beacon數量
+                int numOfBeacon = map.size();
+                Set<String> keys = map.keySet();// 得到全部的key
+                Iterator<String> iter = keys.iterator() ;
+                while (iter.hasNext()) {
+                    String beacon = iter.next();
+                    int rssi = map.get(beacon) / 50;
+                    mCursor = db.rawQuery("SELECT ibeacon.beacon_id, point_info.rssi FROM ibeacon JOIN point_info ON ibeacon.beacon_id=point_info.beacon_id " +
+                            "WHERE ibeacon.mac_addr=" + beacon + "and point_info.point_id=" + Integer.toString(i), null);
+                    if (mCursor.moveToFirst()) {
+                        do {
+                            l[i] += Math.pow(Math.abs(Integer.parseInt(mCursor.getString(1)) - rssi), 2);
+                        } while (mCursor.moveToNext());
+                    }
+                    mCursor.close();
+                }
+                mCursor = db.rawQuery("SELECT x,y FROM detect_point WHERE point_id=" + Integer.toString(i), null);
+                if (mCursor.moveToFirst()) {
+                    do {
+                        x_array[i] = Double.parseDouble(mCursor.getString(0));
+                        y_array[i] = Double.parseDouble(mCursor.getString(1));
+                    } while (mCursor.moveToNext());
                 }
                 mCursor.close();
+                l[i] = Math.sqrt(l[i]);
+                Log.i("dis", Double.toString(l[i]));
+                hashMap.put(l[i], i);
             }
-            mCursor = db.rawQuery("SELECT x,y FROM detect_beacon WHERE _id=" + Integer.toString(i),null);
-            if(mCursor.moveToFirst()){
-                do{
-                    x_array[i] = Double.parseDouble(mCursor.getString(0));
-                    y_array[i] = Double.parseDouble(mCursor.getString(1));
-                }while (mCursor.moveToNext());
+            Arrays.sort(l);
+            double x = 0, y = 0;
+            for (int k = 0; k < 4; k++) {
+                x += x_array[hashMap.get(l[k])];
+                y += y_array[hashMap.get(l[k])];
+                Log.i("num", Integer.toString(hashMap.get(l[k])));
             }
-            mCursor.close();
-            l[i] = Math.sqrt(l[i]);
-            Log.i("dis",Double.toString(l[i]));
-            hashMap.put(l[i],i);
+            double new_x = x / 4;
+            double new_y = y / 4;
+            Log.i("newx", Double.toString(new_x));
+            Log.i("newy", Double.toString(new_y));
         }
-        Arrays.sort(l, Collections.reverseOrder());
-        int x=0,y=0;
-        for(int k=0;k<4;k++){
-            x += x_array[hashMap.get(l[k])];
-            y += y_array[hashMap.get(l[k])];
-            Log.i("num",Integer.toString(hashMap.get(l[k])));
-        }
-        double new_x = x / 4;
-        double new_y = y / 4;
-        Log.i("newx",Double.toString(new_x));
-        Log.i("newy",Double.toString(new_y));
-    }
+    };
 
 
     private Handler handler = new Handler(){
         public void handleMessage(Message msg){
             super.handleMessage(msg);
-            count++;
-            SQLiteDB mSQLiteDB = new SQLiteDB(getActivity());
-            SQLiteDatabase db = mSQLiteDB.getReadableDatabase();
+            mWebViewMap = (WebView) view.findViewById(R.id.wvMap);
+            readHtmlFormAssets();
 
-            Log.i("data",msg.obj.toString());
-            Log.i("data.i", String.valueOf(msg.what));
-            //取得資料庫的指標
-            Cursor mCursor = db.rawQuery("SELECT name,x,y FROM beacon_location WHERE mac_addr=" + "'" + msg.obj.toString() + "'",null);
-            if(mCursor.moveToFirst()){
-                do{
-                    Log.i("xx",mCursor.getString(1));
-
-                    x_array[msg.what] = Double.parseDouble(mCursor.getString(1));
-
-                    y_array[msg.what] = Double.parseDouble(mCursor.getString(2));
-
-                    r[msg.what] = mDeviceAdapter.getItem(msg.what).getIBeacon().getDis();
-
-                }while (mCursor.moveToNext());
-            }
-            mCursor.close();
-
-            //計算座標
-            if(count==3) {
-                double r1 = Math.round(r[0] * 100) / 100.0;
-                double r2 = Math.round(r[1] * 100) / 100.0;
-                double r3 = Math.round(r[2] * 100) / 100.0;
-                x = r3/(r2+r3);
-                y = r1*0.1;
-
-                Log.i("newx", Double.toString(x));
-                Log.i("newy", Double.toString(y));
-                count = 0;
-                mWebViewMap = (WebView) view.findViewById(R.id.wvMap);
-                readHtmlFormAssets();
-
-                mWebViewMap.setWebViewClient(new WebViewClient(){
+            mWebViewMap.setWebViewClient(new WebViewClient(){
                     public void onPageFinished(WebView view, String url){
                         mWebViewMap.loadUrl("javascript:refreshPoint(" + x*100 + ", " + y*100 + ")");
                     }
-                });
-            }
+            });
         }
     };
 
@@ -306,7 +299,6 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
                 new ArrayList<ScannedDevice>());
         deviceListView.setAdapter(mDeviceAdapter);
         mHandler = new Handler();
-
         startScan();
     }
 
