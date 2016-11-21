@@ -94,7 +94,7 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
         }
 
         locate_btn = (Button)view.findViewById(R.id.locate_btn);
-        stop_btn = (Button)view.findViewById(R.id.stop_btn);
+        //stop_btn = (Button)view.findViewById(R.id.stop_btn);
 
         locate_btn.setOnClickListener(new Button.OnClickListener(){
             @Override
@@ -105,13 +105,13 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
                 tmr.schedule(new test_locate(),5000,2000);
             }
         });
-
+/*
         stop_btn.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View v) {
                 stopScan();
             }
-        });
+        });*/
 
         return view;
     }

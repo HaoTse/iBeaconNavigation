@@ -2,11 +2,8 @@ package com.example.lai.project3;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,19 +15,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
-/**
- * Created by lai on 2016/10/15.
- **/
 
 public class FavoriteFragment extends Fragment {
+
     private View view;
     private SQLiteManager DB = null;
     private ArrayList<String> mNames;
     private ArrayList<String> mIds;
     private ListView mList;
     private int size = 0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -55,7 +49,6 @@ public class FavoriteFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putString("id", mIds.get((int)id));
                 fragment.setArguments(bundle);
-                //ft.addToBackStack(null);
                 ft.commit();
             }
         });
@@ -65,19 +58,18 @@ public class FavoriteFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_favorite, menu);
+        if(size > 0)
+           inflater.inflate(R.menu.menu_favorite, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_edit:
-                if(size > 0) {
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    Fragment fragment = new DeleteListFragment();
-                    ft.replace(R.id.layout_fragment, fragment);
-                    ft.commit();
-                }
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                Fragment fragment = new DeleteListFragment();
+                ft.replace(R.id.layout_fragment, fragment);
+                ft.commit();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -85,7 +77,7 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void findView(){
-        mList = (ListView)view.findViewById(R.id.list_view2);
+        mList = (ListView)view.findViewById(R.id.list_view);
     }
 
     @Override

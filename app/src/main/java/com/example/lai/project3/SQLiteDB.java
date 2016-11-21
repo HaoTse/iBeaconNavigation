@@ -9,7 +9,8 @@ import android.util.Log;
 
 /**
  * Created by Dennis on 2016/10/6.
- */
+ **/
+
 public class SQLiteDB extends SQLiteOpenHelper{
     //DB 名稱
     public final static String db_name = "beacon_test";
