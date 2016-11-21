@@ -89,8 +89,7 @@ public class CompanyFragment extends Fragment {
                             result = j.getJSONArray("result");
 
                             //Calling method getStudents to get the students from the JSON Array
-                            getNames(result);
-                            getEmails(result);
+                            getDatas(result);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -110,36 +109,20 @@ public class CompanyFragment extends Fragment {
         requestQueue.add(stringRequest);
     }
 
-    private void getNames(JSONArray j){
+    private void getDatas(JSONArray j){
         //Traversing through all the items in the json array
-        for(int i=0;i<j.length();i++){
+        for(int i = 0; i < j.length(); i++){
             try {
                 //Getting json object
                 JSONObject json = j.getJSONObject(i);
 
                 //Adding the name of the student to array list
                 mNames.add(json.getString("name"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        spinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mNames));
-    }
-
-    private void getEmails(JSONArray j){
-        //Traversing through all the items in the json array
-        for(int i=0;i<j.length();i++){
-            try {
-                //Getting json object
-                JSONObject json = j.getJSONObject(i);
-
-                //Adding the name of the student to array list
                 mEmails.add(json.getString("email"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-
         spinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mNames));
     }
 
