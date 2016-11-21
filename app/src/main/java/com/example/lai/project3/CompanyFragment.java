@@ -1,20 +1,16 @@
 package com.example.lai.project3;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -28,11 +24,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-
-/**
- * Created by lai on 2016/10/15.
- **/
 
 public class CompanyFragment extends Fragment {
     private View view;
@@ -53,10 +44,8 @@ public class CompanyFragment extends Fragment {
 
         getActivity().setTitle(R.string.company_name);
 
-
         findView();
         getData();
-
 
         button.setOnClickListener(new Button.OnClickListener(){
             @Override
@@ -91,7 +80,7 @@ public class CompanyFragment extends Fragment {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        JSONObject j = null;
+                        JSONObject j;
                         try {
                             //Parsing the fetched Json String to JSON Object
                             j = new JSONObject(response);

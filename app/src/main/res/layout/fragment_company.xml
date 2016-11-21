@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:id="@+id/spinner" />
+
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,7 +37,6 @@
                 android:hint="@string/company_hint"
                 android:inputType="textMultiLine"
                 android:id="@+id/mailText"/>
-
         </ScrollView>
     </LinearLayout>
 
@@ -54,7 +54,7 @@
             android:layout_gravity="center|top"
             android:id="@+id/send_button" />
 
-        </LinearLayout>
+    </LinearLayout>
 
     <ImageView
         android:layout_width="match_parent"

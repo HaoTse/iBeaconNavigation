@@ -6,10 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * Created by lai on 2016/10/15.
- **/
-
 public class NavigationFragment extends Fragment {
     private View view;
     @Override
@@ -17,6 +13,8 @@ public class NavigationFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_navigation, container, false);
         getActivity().setTitle(R.string.navigation_name);
+
+        findView();
 
         return view;
     }
