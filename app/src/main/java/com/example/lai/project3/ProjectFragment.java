@@ -2,13 +2,11 @@ package com.example.lai.project3;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -19,7 +17,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -30,27 +27,22 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-
-import static java.sql.Types.NULL;
-
-/**
- * Created by lai on 2016/10/15.
- **/
+import java.util.Locale;
 
 public class ProjectFragment extends Fragment {
+
     private View view;
     private TextView textTeacherTitle;
     private TextView textStudentTitle;
@@ -76,7 +68,9 @@ public class ProjectFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+
         view = inflater.inflate(R.layout.fragment_project, container, false);
+
         findView();
         openDB();
 
@@ -99,9 +93,8 @@ public class ProjectFragment extends Fragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             id = bundle.getString("id");
+            getData(id);
         }
-        Log.i("id", id);
-        getData(id);
 
         return view;
     }
@@ -115,7 +108,7 @@ public class ProjectFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
-                add(String.valueOf(id), name);
+                add_favorite(String.valueOf(id), name);
                 return true;
             case R.id.action_rate:
                 checkIfRated();
@@ -149,6 +142,7 @@ public class ProjectFragment extends Fragment {
         final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
         final RatingBar rating = new RatingBar(getActivity());
         getRate(id);
+
         rating.setMax(5);
         rating.setNumStars(5);
         rating.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -166,20 +160,18 @@ public class ProjectFragment extends Fragment {
         new DialogInterface.OnClickListener() {
             // Button OK
             public void onClick(DialogInterface dialog, int which) {
-                Log.i("rating", String.valueOf(rating.getProgress()));
                 double origin = Double.parseDouble(origin_rate);
                 if(origin == -1) {
-                    Log.i("origin", "-1");
                     updateRate(id, String.valueOf(rating.getProgress()));
                 } else{
                     /*calculate the average rate*/
                     double result = (origin + (double)rating.getProgress()) / 2;
-                    updateRate(id, String.format("%.1f", result));
+                    updateRate(id, String.format(Locale.getDefault(), "%.1f", result));
                 }
                 Rated();
                 dialog.dismiss();
                 toast = Toast.makeText(getActivity(),
-                        "已成功評分", Toast.LENGTH_LONG);
+                        "成功評分", Toast.LENGTH_LONG);
                 toast.show();
             }
         })
@@ -221,17 +213,15 @@ public class ProjectFragment extends Fragment {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        JSONObject j = null;
+                        JSONObject j;
                         try {
                             j = new JSONObject(response);
-                            Log.i("response", response);
 
                             result = j.getJSONObject("exhibition");
                             result2 = j.getJSONArray("student");
-                            Log.i("json", result.toString());
 
-                            getStudents(result2);
                             getNames(result);
+                            getStudents(result2);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -253,9 +243,7 @@ public class ProjectFragment extends Fragment {
 
     private void getNames(JSONObject j){
         try {
-
             name = j.getString("name");
-            Log.i("jobj", name);
             getActivity().setTitle(name);
 
             textTeacherTitle.setText(R.string.proj_teacher);
@@ -263,19 +251,13 @@ public class ProjectFragment extends Fragment {
 
             textIntroTitle.setText(R.string.proj_intro);
             textIntroduction.setText(j.getString("introduction"));
-/*
-            int img = getResources().getIdentifier("com.example.lai.project3:drawable/" + json.getString("img_path"), null, null);
-            Img.decodeSampledBitmapFromResource(getResources(), img, 100, 100);
-            imgView.setImageBitmap(Img.decodeSampledBitmapFromResource(getResources(), img, 100, 100));*/
 
             String pic = j.getString("img_path").replace("..", "http://140.116.82.52/iBeaconNavigation");
-            Log.i("img", pic);
-            imgView.setImageBitmap(getBitmapFromURL(pic));
+            getBitmapFromURL(pic);
 
             progress.setVisibility(View.GONE);
             panel1.setVisibility(View.VISIBLE);
             panel2.setVisibility(View.VISIBLE);
-
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -287,41 +269,34 @@ public class ProjectFragment extends Fragment {
         try {
             for (int i = 0; i < j.length(); i++) {
                 JSONObject json = j.getJSONObject(i);
-                if (j.length() == 1) {
-                    student = json.getString("name");
-                    break;
+                if (i == 0) {
+                    student += json.getString("name");
                 } else {
-                    if (i == 0) {
-                        student += json.getString("name");
-                    } else {
-                        student += "、" + json.getString("name");
-                    }
+                    student += "、" + json.getString("name");
                 }
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-            textStudentTitle.setText(R.string.proj_student);
-            textStudents.setText(student);
+        textStudentTitle.setText(R.string.proj_student);
+        textStudents.setText(student);
 
     }
 
-    public static Bitmap getBitmapFromURL(String src) {
-        try {
-            Log.e("src",src);
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            Log.e("Bitmap","returned");
-            return myBitmap;
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("Exception",e.getMessage());
-            return null;
-        }
+    public void getBitmapFromURL(String src) {
+        ImageRequest imageRequest = new ImageRequest(
+                src,
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap response) {
+                        imgView.setImageBitmap(response);
+                    }
+                }, 0, 0, ImageView.ScaleType.CENTER, Bitmap.Config.RGB_565, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {}
+            });
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        requestQueue.add(imageRequest);
     }
 
     private void getRate(String proj_id){
@@ -330,14 +305,11 @@ public class ProjectFragment extends Fragment {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        JSONObject j = null;
+                        JSONObject j;
                         try {
                             j = new JSONObject(response);
                             rateResult = j.getJSONObject("exhibition");
-                            Log.i("rate_json", rateResult.toString());
-                            //Get
                             origin_rate = rateResult.getString("rate");
-                            Log.i("origin", origin_rate);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -367,16 +339,10 @@ public class ProjectFragment extends Fragment {
         DB.close();
     }
 
-    private void add(String id, String name){
+    private void add_favorite(String id, String name){
         Cursor cursor = DB.getInfo(DB.getReadableDatabase());
         int repeat = 0;
         if(cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            do {
-                Log.i("proj_name", cursor.getString(2));
-                Log.i("proj_id", cursor.getString(1));
-            }
-            while (cursor.moveToNext());
             cursor.moveToFirst();
             do{
                 if(cursor.getString(1).equals(id)){
@@ -395,9 +361,6 @@ public class ProjectFragment extends Fragment {
         if(repeat == 0) {
             SQLiteDatabase db = DB.getWritableDatabase();
             DB.insert(db, id, name);
-            Log.i("add", id);
-            Log.i("add", name);
-            Log.i("add", "ok");
             //顯示Toast
             toast = Toast.makeText(getActivity(),
                     "成功加入我的最愛", Toast.LENGTH_LONG);
@@ -406,23 +369,14 @@ public class ProjectFragment extends Fragment {
     }
 
     private void checkIfRated() {
-        Log.i("checkifrate", "infunction");
         Cursor cursor = DB.ifRated(DB.getReadableDatabase());
         if(cursor.getCount() > 0) {
             cursor.moveToFirst();
-            do{
-                if(cursor.getString(0).equals("0")){
-                    checkRate = 0;
-                    Log.i("check", "0");
-                    break;
-                } else{
-                    checkRate = 1;
-                    Log.i("check", "1");
-                    break;
-
-                }
+            if(cursor.getString(0).equals("0")){
+                checkRate = 0;
+            } else{
+                checkRate = 1;
             }
-            while (cursor.moveToNext());
         }
         cursor.close();
     }

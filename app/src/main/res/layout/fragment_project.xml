@@ -15,13 +15,13 @@
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"
-            android:layout_height="205dp"
+            android:layout_height="0dp"
             android:maxHeight="20dp"
             android:maxWidth="20dp"
             android:layout_gravity="center"
             android:background="@drawable/img_background"
             android:contentDescription="@string/img_description"
-            android:layout_weight="0.1" />
+            android:layout_weight="1" />
 
     </LinearLayout>
 
@@ -34,7 +34,7 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:orientation="horizontal"
         android:visibility="invisible"
         android:id="@+id/panel2"
@@ -49,6 +49,7 @@
             android:layout_gravity="bottom"
             android:src="@drawable/bottom3"
             android:contentDescription="@string/img_description" />
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -116,6 +117,7 @@
 
             </LinearLayout>
         </ScrollView>
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="93dp"
