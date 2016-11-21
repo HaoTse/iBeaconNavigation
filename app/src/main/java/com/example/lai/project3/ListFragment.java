@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -28,11 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by lai on 2016/10/15.
- **/
-
 public class ListFragment extends Fragment {
+
     private ListView mList;
     private ToggleButton toggleButton;
     private View view;
@@ -104,18 +100,25 @@ public class ListFragment extends Fragment {
         toggleButton = (ToggleButton)view.findViewById(R.id.togglebutton);
     }
 
+    /* getData(option): display data fetch form mysql.
+     *
+     * parameters:
+     *      option = 0, order by id
+     *     option = 1, order bt score
+     */
     private void getData(int option){
-        String src = "";
+        String src;
         if(option == 0)
             src = "connectDB.php";
         else
             src = "sortByRate.php";
+
         //Creating a string request
         StringRequest stringRequest = new StringRequest("http://140.116.82.52/" + src,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        JSONObject j = null;
+                        JSONObject j;
                         try {
                             //Parsing the fetched Json String to JSON Object
                             j = new JSONObject(response);
@@ -124,9 +127,7 @@ public class ListFragment extends Fragment {
                             result = j.getJSONArray("result");
 
                             //Calling method getStudents to get the students from the JSON Array
-                            getNames(result);
-                            getRates(result);
-                            getIds(result);
+                            getDatas(result);
                             setList();
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -147,45 +148,22 @@ public class ListFragment extends Fragment {
         requestQueue.add(stringRequest);
     }
 
-    private void getNames(JSONArray j){
+    private void getDatas(JSONArray j){
         //Traversing through all the items in the json array
         for(int i=0;i<j.length();i++){
             try {
                 //Getting json object
                 JSONObject json = j.getJSONObject(i);
 
-                //Adding the name of the student to array list
+                //Adding the data to array list
                 mNames.add(json.getString("name"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void getIds(JSONArray j){
-        //Traversing through all the items in the json array
-        for(int i=0;i<j.length();i++){
-            try {
-                //Getting json object
-                JSONObject json = j.getJSONObject(i);
-
-                //Adding the name of the student to array list
                 mIds.add(json.getString("exhibition_id"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
-    private void getRates(JSONArray j){
-        for(int i=0;i<j.length();i++){
-            try {
-                JSONObject json = j.getJSONObject(i);
                 String r = json.getString("rate");
                 if(r.equals("-1"))
                     mRates.add("目前還沒有評分");
                 else
-                    mRates.add(json.getString("rate"));
+                    mRates.add(r);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -197,9 +175,8 @@ public class ListFragment extends Fragment {
             HashMap<String , String> hashMap = new HashMap<>();
             hashMap.put("name" , mNames.get(i));
             hashMap.put("rate" , mRates.get(i));
-            //把title , text存入HashMap之中
+            //把 title , text 存入 HashMap 之中
             list.add(hashMap);
-            //把HashMap存入list之中
         }
 
         ListAdapter listAdapter = new SimpleAdapter(
