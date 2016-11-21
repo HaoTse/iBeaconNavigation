@@ -45,7 +45,7 @@ public class FavoriteFragment extends Fragment {
                                     long id) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 Fragment fragment = new ProjectFragment();
-                ft.replace(R.id.layout_fragment, fragment);
+                ft.replace(R.id.layout_fragment, fragment, "ProjectFragment");
                 Bundle bundle = new Bundle();
                 bundle.putString("id", mIds.get((int)id));
                 fragment.setArguments(bundle);
@@ -68,7 +68,7 @@ public class FavoriteFragment extends Fragment {
             case R.id.action_edit:
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 Fragment fragment = new DeleteListFragment();
-                ft.replace(R.id.layout_fragment, fragment);
+                ft.replace(R.id.layout_fragment, fragment, "DeleteListFragment");
                 ft.commit();
                 return true;
             default:

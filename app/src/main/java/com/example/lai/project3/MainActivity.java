@@ -6,6 +6,8 @@ import android.app.FragmentTransaction;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabReselectListener;
 import com.roughike.bottombar.OnTabSelectListener;
@@ -38,33 +40,33 @@ public class MainActivity extends AppCompatActivity {
                         stop();
                     fragment = new FavoriteFragment();
                     FragmentTransaction ft = fm.beginTransaction();
-                    ft.replace(R.id.layout_fragment, fragment);
+                    ft.replace(R.id.layout_fragment, fragment, "FavoriteFragment");
                     ft.commit();
                 }else if (tabId == R.id.tab_navigation) {
                     if(check == 0)
                         stop();
                     fragment = new NavigationFragment();
                     FragmentTransaction ft = fm.beginTransaction();
-                    ft.replace(R.id.layout_fragment, fragment);
+                    ft.replace(R.id.layout_fragment, fragment, "NavigationFragment");
                     ft.commit();
                 }else if(tabId == R.id.tab_map){
                     fragment = new ScanFragment();
                     FragmentTransaction ft = fm.beginTransaction();
-                    ft.replace(R.id.layout_fragment, fragment);
+                    ft.replace(R.id.layout_fragment, fragment, "ScanFragment");
                     ft.commit();
                 } else if(tabId == R.id.tab_company){
                     if(check == 0)
                         stop();
                     fragment = new CompanyFragment();
                     FragmentTransaction ft = fm.beginTransaction();
-                    ft.replace(R.id.layout_fragment, fragment);
+                    ft.replace(R.id.layout_fragment, fragment, "CompanyFragment");
                     ft.commit();
                 }else if(tabId == R.id.tab_list){
                     if(check == 0)
                         stop();
                     fragment = new ListFragment();
                     FragmentTransaction ft = fm.beginTransaction();
-                    ft.replace(R.id.layout_fragment, fragment);
+                    ft.replace(R.id.layout_fragment, fragment, "ListFragment");
                     ft.commit();
                 }
 
@@ -78,12 +80,12 @@ public class MainActivity extends AppCompatActivity {
                 if(tabId == R.id.tab_favorites){
                     fragment = new FavoriteFragment();
                     FragmentTransaction ft = fm.beginTransaction();
-                    ft.replace(R.id.layout_fragment, fragment);
+                    ft.replace(R.id.layout_fragment, fragment, "FavoriteFragment");
                     ft.commit();
                 } else if (tabId == R.id.tab_list) {
                     fragment = new ListFragment();
                     FragmentTransaction ft = fm.beginTransaction();
-                    ft.replace(R.id.layout_fragment, fragment);
+                    ft.replace(R.id.layout_fragment, fragment, "ListFragment");
                     ft.commit();
                 }
             }
@@ -92,10 +94,29 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
 
-        //shutdown
-        finish();
+        DeleteListFragment deleteListFragment = (DeleteListFragment)getFragmentManager().findFragmentByTag("DeleteListFragment");
+        ProjectFragment projectFragment = (ProjectFragment)getFragmentManager().findFragmentByTag("ProjectFragment");
+
+        if(deleteListFragment != null && deleteListFragment.isVisible()){
+            Log.v("cur", "1");
+            fragment = new FavoriteFragment();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.layout_fragment, fragment, "FavoriteFragment");
+            ft.commit();
+        }
+        else if(projectFragment != null && projectFragment.isVisible()){
+            Log.v("cur", "2");
+            fragment = new ListFragment();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.layout_fragment, fragment, "ListFragment");
+            ft.commit();
+        }
+        else {
+            Log.v("cur", "3");
+            //shutdown
+            finish();
+        }
     }
 
     protected void findView(){
