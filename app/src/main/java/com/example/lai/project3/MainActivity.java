@@ -99,21 +99,18 @@ public class MainActivity extends AppCompatActivity {
         ProjectFragment projectFragment = (ProjectFragment)getFragmentManager().findFragmentByTag("ProjectFragment");
 
         if(deleteListFragment != null && deleteListFragment.isVisible()){
-            Log.v("cur", "1");
             fragment = new FavoriteFragment();
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.layout_fragment, fragment, "FavoriteFragment");
             ft.commit();
         }
         else if(projectFragment != null && projectFragment.isVisible()){
-            Log.v("cur", "2");
             fragment = new ListFragment();
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.layout_fragment, fragment, "ListFragment");
             ft.commit();
         }
         else {
-            Log.v("cur", "3");
             //shutdown
             finish();
         }

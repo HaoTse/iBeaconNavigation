@@ -1,9 +1,8 @@
 package com.example.lai.project3;
 
 import android.Manifest;
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
@@ -15,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,16 +40,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-
-/**
- * Created by Dennis on 2016/10/23.
- **/
 
 public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCallback{
     private View view;
@@ -58,7 +53,7 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
     private Handler mHandler;
     private boolean mIsScanning;
     private Button locate_btn;
-    private Button stop_btn;
+    private WebView mWebViewMap;
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
@@ -67,8 +62,6 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
 
     //JSON URL
     public static final String DATA_URL = "http://140.116.82.52/getBeaconLocation.php";
-
-    private WebView mWebViewMap;
 
     private static final int REQUEST_ENABLE_BT = 1;
     // Stops scanning after 8 seconds.
@@ -83,18 +76,17 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //getActivity().requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         view = inflater.inflate(R.layout.activity_scan, container, false);
         getActivity().setTitle(R.string.navigation_name);
+
+        findView();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Android M Permission check
             if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
             }
         }
-
-        locate_btn = (Button)view.findViewById(R.id.locate_btn);
-        //stop_btn = (Button)view.findViewById(R.id.stop_btn);
 
         locate_btn.setOnClickListener(new Button.OnClickListener(){
             @Override
@@ -105,19 +97,18 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
                 tmr.schedule(new test_locate(),5000,2000);
             }
         });
-/*
-        stop_btn.setOnClickListener(new Button.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                stopScan();
-            }
-        });*/
 
         return view;
     }
 
+    private void findView(){
+        locate_btn = (Button)view.findViewById(R.id.locate_btn);
+        mWebViewMap = (WebView) view.findViewById(R.id.wvMap);
+        readHtmlFormAssets();
+    }
+
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSION_REQUEST_COARSE_LOCATION:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -281,14 +272,8 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
             x = Double.parseDouble(ss[0]);
             y = Double.parseDouble(ss[1]);
             Log.i("x?",Double.toString(x));
-            mWebViewMap = (WebView) view.findViewById(R.id.wvMap);
-            readHtmlFormAssets();
 
-            mWebViewMap.setWebViewClient(new WebViewClient(){
-                    public void onPageFinished(WebView view, String url){
-                        mWebViewMap.loadUrl("javascript:refreshPoint(" + 500 + ", " + 500 + ")");
-                    }
-            });
+            mWebViewMap.loadUrl("javascript:refreshPoint(" + x + ", " + y + ")");
         }
     };
 
@@ -305,10 +290,6 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
                 }*/
             }
         });
-    }
-
-    private void findView(){
-
     }
 
     private void init() {
@@ -341,7 +322,6 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
             //tmr.schedule(new show_coordinate(),5000,3000);
             //getActivity().setProgressBarIndeterminateVisibility(true);
             //getActivity().invalidateOptionsMenu();
-
         }
     }
 
@@ -359,6 +339,7 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
     }
 
     //read svg
+    @SuppressLint("SetJavaScriptEnabled")
     private void readHtmlFormAssets() {
         mWebViewMap.setWebChromeClient(new WebChromeClient());
         mWebViewMap.setWebViewClient(new WebViewClient());
@@ -382,11 +363,8 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
         websettings.setLoadWithOverviewMode(true);
         websettings.setUseWideViewPort(true);
 
-
         String aURL = "file:///android_asset/index.html";
         mWebViewMap.loadUrl(aURL);
-
-
     }
 
 }

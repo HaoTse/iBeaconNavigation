@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 	<head>
@@ -18,33 +17,43 @@
 			}
 		</style>
 
-		<script>
+		<script type="text/javascript">
 			$(document).ready(function(){
 
-				var s = Snap("#svgout");
+				var s = Snap("#map-svg");
 				var g = s.group();
+				var point = s.group();
 
 				var tux = Snap.load("CSIE_1F.svg",  function ( loadedFragment ) {
+													var tmp = loadedFragment.select("#map").attr();
+													s.attr("viewBox", loadedFragment.select("#map").attr("viewBox"));
 	                                                g.append( loadedFragment );
 	                                        } );
 
-				refreshPoint(10, 10);
-				
-				function refreshPoint(x, y){
-					$("#x").text(x);
-					$("#y").text(y);
-					var c = g.circle(x, y, 10);
-					g.select("circle").attr({id:"point",  fill:"red"});
-				}
-
+				var location = point.circle(0, 0, 5);
+				location.attr("id", "location");
 			});
+
+			function refreshPoint(x, y){
+				var s = Snap("#map-svg");
+				var point = s.group();
+				var old_location = s.select("#location");
+				old_location.remove();
+				$("#x").text(x);
+				$("#y").text(y);
+				var location = point.circle(x, y, 5);
+				location.attr({id: "location", x: x, y: y, fill:"red"});
+			}
 
 		</script>
 	</head>
 	<body>
 		<span id="x"></span>
 		<span id="y"></span>
-		<svg id="svgout" style="width:100%; height: 100%"></svg>
+
+		<div id="map-container">
+			<svg id="map-svg" style="width:100%; height: 100%"></svg>
+		</div>
 
 	</body>
 </html>

@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.example.lai.project3;
-//package youten.redo.ble.util;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
 
-
 /** LeScanned Bluetooth Device */
-public class ScannedDevice {
+class ScannedDevice {
     private static final String UNKNOWN = "Unknown";
     /** BluetoothDevice */
     private BluetoothDevice mDevice;
@@ -36,7 +35,7 @@ public class ScannedDevice {
     /** last updated (Advertise scanned) */
     private long mLastUpdatedMs;
 
-    public ScannedDevice(BluetoothDevice device, int rssi, byte[] scanRecord, long now) {
+    ScannedDevice(BluetoothDevice device, int rssi, byte[] scanRecord, long now) {
         if (device == null) {
             throw new IllegalArgumentException("BluetoothDevice is null");
         }
@@ -57,23 +56,19 @@ public class ScannedDevice {
         }
     }
 
-    public BluetoothDevice getDevice() {
+    BluetoothDevice getDevice() {
         return mDevice;
     }
 
-    public int getRssi() {
+    int getRssi() {
         return mRssi;
     }
 
-    public void setRssi(int rssi) {
+    void setRssi(int rssi) {
         mRssi = rssi;
     }
 
-    public long getLastUpdatedMs() {
-        return mLastUpdatedMs;
-    }
-
-    public void setLastUpdatedMs(long lastUpdatedMs) {
+    void setLastUpdatedMs(long lastUpdatedMs) {
         mLastUpdatedMs = lastUpdatedMs;
     }
 
@@ -81,20 +76,20 @@ public class ScannedDevice {
         return mScanRecord;
     }
 
-    public String getScanRecordHexString() {
+    String getScanRecordHexString() {
         return ScannedDevice.asHex(mScanRecord);
     }
 
-    public void setScanRecord(byte[] scanRecord) {
+    void setScanRecord(byte[] scanRecord) {
         mScanRecord = scanRecord;
         checkIBeacon();
     }
 
-    public IBeacon getIBeacon() {
+    IBeacon getIBeacon() {
         return mIBeacon;
     }
 
-    public String getDisplayName() {
+    String getDisplayName() {
         return mDisplayName;
     }
 
@@ -109,7 +104,7 @@ public class ScannedDevice {
      * @return 16進数の文字列
      */
     @SuppressLint("DefaultLocale")
-    public static String asHex(byte bytes[]) {
+    static String asHex(byte bytes[]) {
         if ((bytes == null) || (bytes.length == 0)) {
             return "";
         }
@@ -134,5 +129,9 @@ public class ScannedDevice {
 
         /// 16進数の文字列を返す。
         return sb.toString();
+    }
+
+    public long getLastUpdatedMs() {
+        return mLastUpdatedMs;
     }
 }
