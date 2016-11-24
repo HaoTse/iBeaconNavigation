@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.example.lai.project3;
+package com.uscc.ibeacon_navigation.ibeacon_detect;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
 
 /** LeScanned Bluetooth Device */
-class ScannedDevice {
+public class ScannedDevice {
     private static final String UNKNOWN = "Unknown";
     /** BluetoothDevice */
     private BluetoothDevice mDevice;
@@ -35,7 +35,7 @@ class ScannedDevice {
     /** last updated (Advertise scanned) */
     private long mLastUpdatedMs;
 
-    ScannedDevice(BluetoothDevice device, int rssi, byte[] scanRecord, long now) {
+    public ScannedDevice(BluetoothDevice device, int rssi, byte[] scanRecord, long now) {
         if (device == null) {
             throw new IllegalArgumentException("BluetoothDevice is null");
         }
@@ -56,19 +56,19 @@ class ScannedDevice {
         }
     }
 
-    BluetoothDevice getDevice() {
+    public BluetoothDevice getDevice() {
         return mDevice;
     }
 
-    int getRssi() {
+    public int getRssi() {
         return mRssi;
     }
 
-    void setRssi(int rssi) {
+    public void setRssi(int rssi) {
         mRssi = rssi;
     }
 
-    void setLastUpdatedMs(long lastUpdatedMs) {
+    public void setLastUpdatedMs(long lastUpdatedMs) {
         mLastUpdatedMs = lastUpdatedMs;
     }
 
@@ -76,20 +76,20 @@ class ScannedDevice {
         return mScanRecord;
     }
 
-    String getScanRecordHexString() {
+    public  String getScanRecordHexString() {
         return ScannedDevice.asHex(mScanRecord);
     }
 
-    void setScanRecord(byte[] scanRecord) {
+    public void setScanRecord(byte[] scanRecord) {
         mScanRecord = scanRecord;
         checkIBeacon();
     }
 
-    IBeacon getIBeacon() {
+    public IBeacon getIBeacon() {
         return mIBeacon;
     }
 
-    String getDisplayName() {
+    public String getDisplayName() {
         return mDisplayName;
     }
 
@@ -104,7 +104,7 @@ class ScannedDevice {
          * @return a hexadecimal string
          */
     @SuppressLint("DefaultLocale")
-    static String asHex(byte bytes[]) {
+    private static String asHex(byte bytes[]) {
         if ((bytes == null) || (bytes.length == 0)) {
             return "";
         }

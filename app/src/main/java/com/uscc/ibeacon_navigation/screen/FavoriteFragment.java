@@ -1,4 +1,4 @@
-package com.example.lai.project3;
+package com.uscc.ibeacon_navigation.screen;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.uscc.ibeacon_navigation.aid.SQLiteManager;
 
 import java.util.ArrayList;
 

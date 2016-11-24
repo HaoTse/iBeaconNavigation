@@ -1,4 +1,4 @@
-package com.example.lai.project3;
+package com.uscc.ibeacon_navigation.screen;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -6,7 +6,6 @@ import android.app.FragmentTransaction;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabReselectListener;
@@ -50,9 +49,9 @@ public class MainActivity extends AppCompatActivity {
                     ft.replace(R.id.layout_fragment, fragment, "NavigationFragment");
                     ft.commit();
                 }else if(tabId == R.id.tab_map){
-                    fragment = new ScanFragment();
+                    fragment = new MapFragment();
                     FragmentTransaction ft = fm.beginTransaction();
-                    ft.replace(R.id.layout_fragment, fragment, "ScanFragment");
+                    ft.replace(R.id.layout_fragment, fragment, "MapFragment");
                     ft.commit();
                 } else if(tabId == R.id.tab_company){
                     if(check == 0)
@@ -122,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void stop(){
         check = 1;
-        ScanFragment fm = (ScanFragment) getFragmentManager().findFragmentById(R.id.layout_fragment);
+        MapFragment fm = (MapFragment) getFragmentManager().findFragmentById(R.id.layout_fragment);
         fm.stopScan();
     }
 }

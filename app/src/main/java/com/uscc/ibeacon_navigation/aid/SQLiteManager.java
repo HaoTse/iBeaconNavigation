@@ -1,4 +1,4 @@
-package com.example.lai.project3;
+package com.uscc.ibeacon_navigation.aid;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-class SQLiteManager extends SQLiteOpenHelper {
+public class SQLiteManager extends SQLiteOpenHelper {
 
     private final static int DB_VERSION = 1; // 資料庫版本
     private final static String DB_NAME = "MySQLite.db"; //資料庫名稱，附檔名為db
@@ -20,7 +20,7 @@ class SQLiteManager extends SQLiteOpenHelper {
     private final static String NAME = "name"; //欄位名稱
     private final static String IFRATED = "ifRated"; //欄位名稱
 
-    SQLiteManager (Context context) {
+    public SQLiteManager (Context context) {
 
         /*
         *   SQLiteOpenHelper /
@@ -85,25 +85,25 @@ class SQLiteManager extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO rated_table (ifRated) VALUES (0)");
     }
 
-    Cursor getInfo(SQLiteDatabase db) {
+    public Cursor getInfo(SQLiteDatabase db) {
         return  db.query(FAVORITE_TABLE, new String[] {_ID, PROJ_ID, NAME}, null, null, null, null, null);
     }
 
-    Cursor ifRated(SQLiteDatabase db) {
+    public Cursor ifRated(SQLiteDatabase db) {
         return  db.query(RATED_TABLE, new String[] {IFRATED}, null, null, null, null, null);
     }
 
-    void insert(SQLiteDatabase db, String id, String name){
+    public void insert(SQLiteDatabase db, String id, String name){
         Log.i("insert id", id);
         db.execSQL("INSERT INTO favorite_table (proj_id, name) VALUES(" + id + ", '" + name + "')");
     }
 
-    void delete(SQLiteDatabase db, String id){
+    public void delete(SQLiteDatabase db, String id){
         Log.i("delete id", id);
         db.execSQL("DELETE FROM favorite_table WHERE proj_id="+id);
     }
 
-    void rated(SQLiteDatabase db){
+    public void rated(SQLiteDatabase db){
         ContentValues cv = new ContentValues();
         cv.put("ifRated", "1");
         db.update(RATED_TABLE, cv, "ifRated = 0", null);
@@ -113,7 +113,7 @@ class SQLiteManager extends SQLiteOpenHelper {
      *
      * return id
      */
-    long insert_ibeacon_data(int beacon_id, String mac_addr, String name,
+    public long insert_ibeacon_data(int beacon_id, String mac_addr, String name,
                        double x, double y)
     {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -128,7 +128,7 @@ class SQLiteManager extends SQLiteOpenHelper {
         return db.insert("ibeacon", null, cv);
     }
 
-    long insert_detect_point_data(int point_id, double x, double y)
+    public long insert_detect_point_data(int point_id, double x, double y)
     {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -140,7 +140,7 @@ class SQLiteManager extends SQLiteOpenHelper {
         return db.insert("detect_point", null, cv);
     }
 
-    long insert_point_info_data(int point_id, int beacon_id, int rssi)
+    public long insert_point_info_data(int point_id, int beacon_id, int rssi)
     {
         SQLiteDatabase db = this.getWritableDatabase();
 

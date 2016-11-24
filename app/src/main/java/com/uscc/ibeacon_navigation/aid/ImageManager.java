@@ -1,12 +1,8 @@
-package com.example.lai.project3;
+package com.uscc.ibeacon_navigation.aid;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
-/**
- * Created by acer on 2016/10/17.
- */
 
 public class ImageManager {
     public static int calculateInSampleSize(

@@ -1,4 +1,4 @@
-package com.example.lai.project3;
+package com.uscc.ibeacon_navigation.ibeacon_detect;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,6 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.uscc.ibeacon_navigation.ibeacon_detect.ScannedDevice;
+import com.uscc.ibeacon_navigation.screen.R;
 
 public class DeviceAdapter extends ArrayAdapter<ScannedDevice> {
 

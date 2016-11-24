@@ -22,7 +22,7 @@
  * under the License.
  */
 //package com.radiusnetworks.ibeacon;
-package com.example.lai.project3;
+package com.uscc.ibeacon_navigation.ibeacon_detect;
 
 import java.util.Locale;
 

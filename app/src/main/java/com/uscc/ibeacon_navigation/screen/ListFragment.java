@@ -1,4 +1,4 @@
-package com.example.lai.project3;
+package com.uscc.ibeacon_navigation.screen;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;

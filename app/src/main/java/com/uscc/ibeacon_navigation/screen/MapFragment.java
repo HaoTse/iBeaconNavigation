@@ -1,4 +1,4 @@
-package com.example.lai.project3;
+package com.uscc.ibeacon_navigation.screen;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -33,6 +33,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.uscc.ibeacon_navigation.aid.SQLiteManager;
+import com.uscc.ibeacon_navigation.ibeacon_detect.DeviceAdapter;
+import com.uscc.ibeacon_navigation.ibeacon_detect.ScannedDevice;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,7 +49,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCallback{
+public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCallback{
 
     private View view;
     private SQLiteManager DB = null;
@@ -78,6 +81,7 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
         getActivity().setTitle(R.string.map_name);
 
         findView();
+        openDB();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Android M Permission check
@@ -117,6 +121,12 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
     public void onPause() {
         super.onPause();
         stopScan();
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        closeDB();
     }
 
     @Override
@@ -178,8 +188,6 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
                             JSONArray detect_point_data = json.getJSONArray("detect_point");
                             JSONArray point_info_data = json.getJSONArray("point_info");
 
-                            openDB();
-
                             for(int i = 0; i < ibeacon_data.length(); i++){
                                 JSONObject jsonObject = ibeacon_data.getJSONObject(i);
 
@@ -209,7 +217,6 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
                                 DB.insert_detect_point_data(point_id,x,y);
                             }
 
-                            closeDB();
                         } catch (JSONException e){
                             e.printStackTrace();
                         }
@@ -247,7 +254,6 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
             Double[] l = new Double[21];
             HashMap<Double, Integer> hashMap = new HashMap<>();
 
-            openDB();
             SQLiteDatabase db = DB.getReadableDatabase();
             Cursor mCursor;
 
