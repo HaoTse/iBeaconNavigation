@@ -188,7 +188,7 @@ public class ProjectFragment extends Fragment {
 
     private void updateRate(String proj_id, String proj_rate){
         //Creating a string request
-        StringRequest stringRequest = new StringRequest("http://140.116.82.52/updateRate.php?id=" + proj_id + "&rate=" + proj_rate,
+        StringRequest stringRequest = new StringRequest("http://140.116.82.52/iBeaconNavigationApp/updateRate.php?id=" + proj_id + "&rate=" + proj_rate,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -209,7 +209,7 @@ public class ProjectFragment extends Fragment {
 
     private void getData(String proj_id){
         //Creating a string request
-        StringRequest stringRequest = new StringRequest("http://140.116.82.52/findById.php?id=" + proj_id,
+        StringRequest stringRequest = new StringRequest("http://140.116.82.52/iBeaconNavigationApp/findById.php?id=" + proj_id,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -301,7 +301,7 @@ public class ProjectFragment extends Fragment {
 
     private void getRate(String proj_id){
         //Creating a string request
-        StringRequest stringRequest = new StringRequest("http://140.116.82.52/findById.php?id=" + proj_id,
+        StringRequest stringRequest = new StringRequest("http://140.116.82.52/iBeaconNavigationApp/findById.php?id=" + proj_id,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

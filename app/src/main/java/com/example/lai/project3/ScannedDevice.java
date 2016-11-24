@@ -98,36 +98,30 @@ class ScannedDevice {
     }
 
     /**
-     * バイト配列を16進数の文字列に変換する。 http://d.hatena.ne.jp/winebarrel/20041012/p1
-     * 
-     * @param bytes バイト配列
-     * @return 16進数の文字列
-     */
+         * Converts an array of bytes to a hexadecimal string
+         *
+         * @param bytes an array of bytes
+         * @return a hexadecimal string
+         */
     @SuppressLint("DefaultLocale")
     static String asHex(byte bytes[]) {
         if ((bytes == null) || (bytes.length == 0)) {
             return "";
         }
 
-        // バイト配列の２倍の長さの文字列バッファを生成。
+        // new a string buffer which length is twice the length of byte array
         StringBuffer sb = new StringBuffer(bytes.length * 2);
 
-        // バイト配列の要素数分、処理を繰り返す。
         for (int index = 0; index < bytes.length; index++) {
-            // バイト値を自然数に変換。
             int bt = bytes[index] & 0xff;
 
-            // バイト値が0x10以下か判定。
             if (bt < 0x10) {
-                // 0x10以下の場合、文字列バッファに0を追加。
                 sb.append("0");
             }
 
-            // バイト値を16進数の文字列に変換して、文字列バッファに追加。
             sb.append(Integer.toHexString(bt).toUpperCase());
         }
 
-        /// 16進数の文字列を返す。
         return sb.toString();
     }
 

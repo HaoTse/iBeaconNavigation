@@ -109,41 +109,46 @@ class SQLiteManager extends SQLiteOpenHelper {
         db.update(RATED_TABLE, cv, "ifRated = 0", null);
     }
 
-    //新增 ibeacon Table內容
-    public long insert_ibeacon(int beacon_id,String mac_addr, String name,
+    /* 新增 ibeacon Table內容
+     *
+     * return id
+     */
+    long insert_ibeacon_data(int beacon_id, String mac_addr, String name,
                        double x, double y)
     {
         SQLiteDatabase db = this.getWritableDatabase();
+
         ContentValues cv = new ContentValues();
         cv.put("beacon_id",beacon_id);
         cv.put("mac_addr", mac_addr);
         cv.put("name", name);
         cv.put("x", x);
         cv.put("y", y);
-        long row = db.insert("ibeacon", null, cv);
-        Log.i("cv",cv.toString());
-        return row;
+
+        return db.insert("ibeacon", null, cv);
     }
-    public long insert2(int point_id,double x, double y)
+
+    long insert_detect_point_data(int point_id, double x, double y)
     {
         SQLiteDatabase db = this.getWritableDatabase();
+
         ContentValues cv = new ContentValues();
         cv.put("point_id",point_id);
         cv.put("x", x);
         cv.put("y", y);
-        long row = db.insert("detect_point", null, cv);
-        Log.i("cv",cv.toString());
-        return row;
+
+        return db.insert("detect_point", null, cv);
     }
-    public long insert3(int point_id, int beacon_id, int rssi)
+
+    long insert_point_info_data(int point_id, int beacon_id, int rssi)
     {
         SQLiteDatabase db = this.getWritableDatabase();
+
         ContentValues cv = new ContentValues();
         cv.put("point_id", point_id);
         cv.put("beacon_id", beacon_id);
         cv.put("rssi", rssi);
-        long row = db.insert("point_info", null, cv);
-        Log.i("cv",cv.toString());
-        return row;
+
+        return db.insert("point_info", null, cv);
     }
 }

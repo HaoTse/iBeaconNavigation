@@ -47,37 +47,35 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCallback{
+
     private View view;
+    private SQLiteManager DB = null;
     private BluetoothAdapter mBTAdapter;
     private DeviceAdapter mDeviceAdapter;
-    private Handler mHandler;
     private boolean mIsScanning;
     private Button locate_btn;
     private WebView mWebViewMap;
 
-    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
+    private Timer tmr;
+    private static final long DELAY_TIME = 5000;
+    private static final long PERIOD_TIME = 2000;
 
-    //timer
-    Timer tmr;
+    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
+    private static final int REQUEST_ENABLE_BT = 1;
 
     //JSON URL
-    public static final String DATA_URL = "http://140.116.82.52/getBeaconLocation.php";
+    public static final String DATA_URL = "http://140.116.82.52/iBeaconNavigationApp/getBeaconLocation.php";
 
-    private static final int REQUEST_ENABLE_BT = 1;
-    // Stops scanning after 8 seconds.
-    private static final long SCAN_PERIOD = 8000;
     private double[] x_array = new double[21];
     private double[] y_array = new double[21];
-    private double[] r = new double[21];
     double x;
     double y;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_scan, container, false);
-        getActivity().setTitle(R.string.navigation_name);
+        view = inflater.inflate(R.layout.fragment_scan, container, false);
+        getActivity().setTitle(R.string.map_name);
 
         findView();
 
@@ -93,12 +91,46 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
             public void onClick(View v) {
                 init();
                 fetchDataFromMysqlToSQLite();
+                startScan();
                 tmr = new Timer();
-                tmr.schedule(new test_locate(),5000,2000);
+                tmr.schedule(new locate_task(), DELAY_TIME, PERIOD_TIME);
             }
         });
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if ((mBTAdapter != null) && (!mBTAdapter.isEnabled())) {
+            //pop dialog and open Bluetooth
+            Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enabler, REQUEST_ENABLE_BT);
+        }
+
+        startScan();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopScan();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_COARSE_LOCATION:
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getActivity(), R.string.permission_deny, Toast.LENGTH_SHORT)
+                            .show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     private void findView(){
@@ -107,34 +139,31 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
         readHtmlFormAssets();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_REQUEST_COARSE_LOCATION:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // TODO request success
-                }
-                break;
-        }
+    private void openDB(){
+        DB = new SQLiteManager(getActivity());
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if ((mBTAdapter != null) && (!mBTAdapter.isEnabled())) {
-            Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enabler, REQUEST_ENABLE_BT);
-            //Toast.makeText(this, R.string.bt_not_enabled, Toast.LENGTH_SHORT).show();
-        }
-        //getActivity().invalidateOptionsMenu();
-        startScan();
+    private void closeDB(){
+        DB.close();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        stopScan();
+    private void init() {
+        //利用 getPackageManager().hasSystemFeature() 檢查手機是否支援BLE設備，否則利用 finish() 關閉程式。
+        if(!getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)){
+            Toast.makeText(getActivity().getBaseContext(), R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+            getActivity().finish();
+        }
+
+        // BT check
+        mBTAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(!mBTAdapter.isEnabled())
+            mBTAdapter.enable();
+
+        // init listview
+        ListView deviceListView = (ListView) view.findViewById(R.id.list);
+        mDeviceAdapter = new DeviceAdapter(getActivity(), R.layout.listitem_device,
+                new ArrayList<ScannedDevice>());
+        deviceListView.setAdapter(mDeviceAdapter);
     }
 
     private void fetchDataFromMysqlToSQLite(){
@@ -145,35 +174,42 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
                     public void onResponse(String response) {
                         try {
                             JSONObject json = new JSONObject(response);
-                            JSONArray j = json.getJSONArray("output");
-                            JSONArray jj = json.getJSONArray("output2");
-                            JSONArray jjj = json.getJSONArray("output3");
-                            //開啟手機資料庫
-                            SQLiteDB mSQLiteDB = new SQLiteDB(getActivity());
-                            for(int i=0;i<j.length();i++){
-                                JSONObject jsonObject = j.getJSONObject(i);
+                            JSONArray ibeacon_data = json.getJSONArray("ibeacon");
+                            JSONArray detect_point_data = json.getJSONArray("detect_point");
+                            JSONArray point_info_data = json.getJSONArray("point_info");
+
+                            openDB();
+
+                            for(int i = 0; i < ibeacon_data.length(); i++){
+                                JSONObject jsonObject = ibeacon_data.getJSONObject(i);
+
                                 int beacon_id = jsonObject.getInt("beacon_id");
                                 String mac_addr = jsonObject.getString("mac_addr");
                                 String name = jsonObject.getString("name");
                                 double x_coordinate = jsonObject.getDouble("x");
                                 double y_coordinate = jsonObject.getDouble("y");
-                                mSQLiteDB.insert(beacon_id,mac_addr,name,x_coordinate,y_coordinate);
+                                DB.insert_ibeacon_data(beacon_id, mac_addr, name, x_coordinate, y_coordinate);
                             }
-                            for(int i=0;i<jj.length();i++){
-                                JSONObject jsonObject = jj.getJSONObject(i);
+
+                            for(int i = 0; i < point_info_data.length(); i++){
+                                JSONObject jsonObject = point_info_data.getJSONObject(i);
+
                                 int point_id = jsonObject.getInt("point_id");
                                 int beacon_id = jsonObject.getInt("beacon_id");
                                 int rssi = jsonObject.getInt("rssi");
-                                mSQLiteDB.insert3(point_id,beacon_id,rssi);
+                                DB.insert_point_info_data(point_id,beacon_id,rssi);
                             }
-                            for(int i=0;i<jjj.length();i++){
-                                JSONObject jsonObject = jjj.getJSONObject(i);
+
+                            for(int i = 0; i < detect_point_data.length(); i++){
+                                JSONObject jsonObject = detect_point_data.getJSONObject(i);
+
                                 int point_id = jsonObject.getInt("point_id");
                                 double x = jsonObject.getDouble("x");
                                 double y = jsonObject.getDouble("y");
-                                mSQLiteDB.insert2(point_id,x,y);
+                                DB.insert_detect_point_data(point_id,x,y);
                             }
-                            mSQLiteDB.close();
+
+                            closeDB();
                         } catch (JSONException e){
                             e.printStackTrace();
                         }
@@ -191,10 +227,10 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
         requestQueue.add(stringRequest);
     }
 
-    public class test_locate extends TimerTask {
+    public class locate_task extends TimerTask {
         @Override
         public void run () {
-            HashMap<String, Integer> map = new HashMap<String, Integer>();
+            HashMap<String, Integer> map = new HashMap<>();
             for (int i = 0; i < 50; i++) {
                 stopScan();
                 for (int j = 0; j < mDeviceAdapter.getCount(); j++) {
@@ -207,20 +243,22 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
                 }
                 startScan();
             }
+
             Double[] l = new Double[21];
-            HashMap<Double, Integer> hashMap = new HashMap<Double, Integer>();
-            SQLiteDB mSQLiteDB = new SQLiteDB(getActivity());
-            SQLiteDatabase db = mSQLiteDB.getReadableDatabase();
+            HashMap<Double, Integer> hashMap = new HashMap<>();
+
+            openDB();
+            SQLiteDatabase db = DB.getReadableDatabase();
             Cursor mCursor;
-            int i, j;
-            for (i = 0; i < 21; i++)
+
+            for (int i = 0; i < 21; i++)
                 l[i] = 10000.0;
+
             //場域內已知點數量
-            for (i = 10; i <= 15; i++) {
-                //場域內beacon數量
-                int numOfBeacon = map.size();
+            for (int i = 10; i <= 15; i++) {
                 Set<String> keys = map.keySet();// 得到全部的key
                 Iterator<String> iter = keys.iterator() ;
+
                 while (iter.hasNext()) {
                     String beacon = iter.next();
                     int rssi = map.get(beacon) / 50;
@@ -233,6 +271,7 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
                     }
                     mCursor.close();
                 }
+
                 mCursor = db.rawQuery("SELECT x,y FROM detect_point WHERE point_id=" + Integer.toString(i), null);
                 if (mCursor.moveToFirst()) {
                     do {
@@ -241,10 +280,12 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
                     } while (mCursor.moveToNext());
                 }
                 mCursor.close();
+
                 l[i] = Math.sqrt(l[i]);
                 Log.i("dis", Double.toString(l[i]));
                 hashMap.put(l[i], i);
             }
+
             Arrays.sort(l);
             double x = 0, y = 0;
             for (int k = 0; k < 4; k++) {
@@ -256,13 +297,13 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
             double new_y = y / 4;
             Log.i("newx", Double.toString(new_x));
             Log.i("newy", Double.toString(new_y));
+
             String coordinate = Double.toString(new_x)+"@"+Double.toString(new_y);
             Message message = new Message();
             message.obj = coordinate;
             handler.sendMessage(message);
         }
-    };
-
+    }
 
     private Handler handler = new Handler(){
         public void handleMessage(Message msg){
@@ -271,7 +312,6 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
             String[] ss = str.split("@");
             x = Double.parseDouble(ss[0]);
             y = Double.parseDouble(ss[1]);
-            Log.i("x?",Double.toString(x));
 
             mWebViewMap.loadUrl("javascript:refreshPoint(" + x + ", " + y + ")");
         }
@@ -284,33 +324,9 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                String summary = mDeviceAdapter.update(newDeivce, newRssi, newScanRecord);
-                /*if (summary != null) {
-                    getActivity().getActionBar().setSubtitle(summary);
-                }*/
+                mDeviceAdapter.update(newDeivce, newRssi, newScanRecord);
             }
         });
-    }
-
-    private void init() {
-        // BLE check
-        if(!getActivity().getPackageManager().hasSystemFeature(getActivity().getPackageManager().FEATURE_BLUETOOTH_LE)){
-            Toast.makeText(getActivity().getBaseContext(),R.string.ble_not_supported,Toast.LENGTH_SHORT).show();
-            getActivity().finish();
-        }//利用getPackageManager().hasSystemFeature()檢查手機是否支援BLE設備，否則利用finish()關閉程式。
-
-        // BT check
-        mBTAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(!mBTAdapter.isEnabled())
-            mBTAdapter.enable();
-
-        // init listview
-        ListView deviceListView = (ListView) view.findViewById(R.id.list);
-        mDeviceAdapter = new DeviceAdapter(getActivity(), R.layout.listitem_device,
-                new ArrayList<ScannedDevice>());
-        deviceListView.setAdapter(mDeviceAdapter);
-        mHandler = new Handler();
-        startScan();
     }
 
     private void startScan() {
@@ -318,24 +334,14 @@ public class ScanFragment extends Fragment implements BluetoothAdapter.LeScanCal
             // Stops scanning after a pre-defined scan period.
             mBTAdapter.startLeScan(this);
             mIsScanning = true;
-            //tmr = new Timer();
-            //tmr.schedule(new show_coordinate(),5000,3000);
-            //getActivity().setProgressBarIndeterminateVisibility(true);
-            //getActivity().invalidateOptionsMenu();
         }
     }
 
     public void stopScan() {
         if (mBTAdapter != null) {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                mBTAdapter.stopLeScan(this);
+            mBTAdapter.stopLeScan(this);
         }
         mIsScanning = false;
-        //tmr.cancel();
-        //tmr.purge();
-        //getActivity().setProgressBarIndeterminateVisibility(false);
-        //getActivity().invalidateOptionsMenu();
-
     }
 
     //read svg

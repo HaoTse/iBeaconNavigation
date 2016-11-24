@@ -1,5 +1,4 @@
 package com.example.lai.project3;
-//package youten.redo.ble.ibeacondetector;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 public class DeviceAdapter extends ArrayAdapter<ScannedDevice> {
+
     private static final String PREFIX_RSSI = "RSSI:";
     private static final String PREFIX_DISTANCE = "Distance:";
     private List<ScannedDevice> mList;
@@ -61,13 +61,13 @@ public class DeviceAdapter extends ArrayAdapter<ScannedDevice> {
     }
 
     /**
-     * add or update BluetoothDevice List
-     * 
-     * @param newDevice Scanned Bluetooth Device
-     * @param rssi RSSI
-     * @param scanRecord advertise data
-     * @return summary ex. "iBeacon:3 (Total:10)"
-     */
+         * add or update BluetoothDevice List
+         *
+         * @param newDevice Scanned Bluetooth Device
+         * @param rssi RSSI
+         * @param scanRecord advertise data
+         * @return summary ex. "iBeacon:3 (Total:10)"
+         */
     public String update(BluetoothDevice newDevice, int rssi, byte[] scanRecord) {
         if ((newDevice == null) || (newDevice.getAddress() == null)) {
             return "";

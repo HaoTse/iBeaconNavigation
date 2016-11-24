@@ -18,6 +18,7 @@
     <string name="proj_student">組 員</string>
     <string name="proj_intro">簡  介</string>
 
+    <string name="permission_deny">Permission deny.</string>
     <string name="locate_btn">定位</string>
     <string name="stop_btn">停止定位</string>
     <string name="ble_not_supported">BLE not supported on this device.</string>

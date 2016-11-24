@@ -76,7 +76,7 @@ public class CompanyFragment extends Fragment {
 
     private void getData(){
         //Creating a string request
-        StringRequest stringRequest = new StringRequest("http://140.116.82.52/connectDB.php",
+        StringRequest stringRequest = new StringRequest("http://140.116.82.52/iBeaconNavigationApp/connectDB.php",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

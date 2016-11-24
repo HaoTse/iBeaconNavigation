@@ -114,7 +114,7 @@ public class ListFragment extends Fragment {
             src = "sortByRate.php";
 
         //Creating a string request
-        StringRequest stringRequest = new StringRequest("http://140.116.82.52/" + src,
+        StringRequest stringRequest = new StringRequest("http://140.116.82.52/iBeaconNavigationApp/" + src,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
