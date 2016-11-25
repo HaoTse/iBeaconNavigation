@@ -16,7 +16,6 @@ public class MainActivity extends AppCompatActivity {
     private BottomBar bottomBar;
     private FragmentManager fm;
     private Fragment fragment;
-    private int check = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,15 +34,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(@IdRes int tabId) {
                 if(tabId == R.id.tab_favorites){
-                    if(check == 0)
-                        stop();
                     fragment = new FavoriteFragment();
                     FragmentTransaction ft = fm.beginTransaction();
                     ft.replace(R.id.layout_fragment, fragment, "FavoriteFragment");
                     ft.commit();
                 }else if (tabId == R.id.tab_navigation) {
-                    if(check == 0)
-                        stop();
                     fragment = new NavigationFragment();
                     FragmentTransaction ft = fm.beginTransaction();
                     ft.replace(R.id.layout_fragment, fragment, "NavigationFragment");
@@ -54,15 +49,11 @@ public class MainActivity extends AppCompatActivity {
                     ft.replace(R.id.layout_fragment, fragment, "MapFragment");
                     ft.commit();
                 } else if(tabId == R.id.tab_company){
-                    if(check == 0)
-                        stop();
                     fragment = new CompanyFragment();
                     FragmentTransaction ft = fm.beginTransaction();
                     ft.replace(R.id.layout_fragment, fragment, "CompanyFragment");
                     ft.commit();
                 }else if(tabId == R.id.tab_list){
-                    if(check == 0)
-                        stop();
                     fragment = new ListFragment();
                     FragmentTransaction ft = fm.beginTransaction();
                     ft.replace(R.id.layout_fragment, fragment, "ListFragment");
@@ -117,11 +108,5 @@ public class MainActivity extends AppCompatActivity {
 
     protected void findView(){
         bottomBar = (BottomBar) findViewById(R.id.bottomBar);
-    }
-
-    public void stop(){
-        check = 1;
-        MapFragment fm = (MapFragment) getFragmentManager().findFragmentById(R.id.layout_fragment);
-        fm.stopScan();
     }
 }

@@ -77,7 +77,7 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_scan, container, false);
+        view = inflater.inflate(R.layout.fragment_map, container, false);
         getActivity().setTitle(R.string.map_name);
 
         findView();
@@ -113,19 +113,24 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
             Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enabler, REQUEST_ENABLE_BT);
         }
-
-        startScan();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        stopScan();
+        if(mIsScanning)
+            stopScan();
+        if(tmr != null)
+            tmr.cancel();
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
+        if(mIsScanning)
+            stopScan();
+        if(tmr != null)
+            tmr.cancel();
         closeDB();
     }
 
@@ -327,12 +332,14 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
     @Override
     public void onLeScan(final BluetoothDevice newDeivce, final int newRssi,
                          final byte[] newScanRecord) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mDeviceAdapter.update(newDeivce, newRssi, newScanRecord);
-            }
-        });
+        if(mIsScanning) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mDeviceAdapter.update(newDeivce, newRssi, newScanRecord);
+                }
+            });
+        }
     }
 
     private void startScan() {
