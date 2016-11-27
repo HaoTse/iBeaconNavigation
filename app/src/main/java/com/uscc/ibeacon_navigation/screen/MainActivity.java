@@ -95,10 +95,7 @@ public class MainActivity extends AppCompatActivity {
             ft.commit();
         }
         else if(projectFragment != null && projectFragment.isVisible()){
-            fragment = new ListFragment();
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.layout_fragment, fragment, "ListFragment");
-            ft.commit();
+            getFragmentManager().popBackStack();
         }
         else {
             //shutdown

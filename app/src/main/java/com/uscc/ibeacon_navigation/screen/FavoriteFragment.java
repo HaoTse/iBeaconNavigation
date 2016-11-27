@@ -48,6 +48,7 @@ public class FavoriteFragment extends Fragment {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 Fragment fragment = new ProjectFragment();
                 ft.replace(R.id.layout_fragment, fragment, "ProjectFragment");
+                ft.addToBackStack(null);
                 Bundle bundle = new Bundle();
                 bundle.putString("id", mIds.get((int)id));
                 fragment.setArguments(bundle);

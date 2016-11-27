@@ -82,6 +82,7 @@ public class ListFragment extends Fragment {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 Fragment fragment = new ProjectFragment();
                 ft.replace(R.id.layout_fragment, fragment, "ProjectFragment");
+                ft.addToBackStack(null);
 
                 /* pass exhibition_id to ProjectFragment*/
                 Bundle bundle = new Bundle();
