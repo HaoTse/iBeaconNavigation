@@ -32,14 +32,11 @@ public class ScannedDevice {
     private byte[] mScanRecord;
     /** parsed iBeacon Data */
     private IBeacon mIBeacon;
-    /** last updated (Advertise scanned) */
-    private long mLastUpdatedMs;
 
-    public ScannedDevice(BluetoothDevice device, int rssi, byte[] scanRecord, long now) {
+    ScannedDevice(BluetoothDevice device, int rssi, byte[] scanRecord) {
         if (device == null) {
             throw new IllegalArgumentException("BluetoothDevice is null");
         }
-        mLastUpdatedMs = now;
         mDevice = device;
         mDisplayName = device.getName();
         if ((mDisplayName == null) || (mDisplayName.length() == 0)) {
@@ -64,37 +61,25 @@ public class ScannedDevice {
         return mRssi;
     }
 
-    public void setRssi(int rssi) {
+    void setRssi(int rssi) {
         mRssi = rssi;
     }
 
-    public void setLastUpdatedMs(long lastUpdatedMs) {
-        mLastUpdatedMs = lastUpdatedMs;
-    }
-
-    public byte[] getScanRecord() {
-        return mScanRecord;
-    }
-
-    public  String getScanRecordHexString() {
+    String getScanRecordHexString() {
         return ScannedDevice.asHex(mScanRecord);
     }
 
-    public void setScanRecord(byte[] scanRecord) {
+    void setScanRecord(byte[] scanRecord) {
         mScanRecord = scanRecord;
         checkIBeacon();
     }
 
-    public IBeacon getIBeacon() {
+    IBeacon getIBeacon() {
         return mIBeacon;
     }
 
-    public String getDisplayName() {
+    String getDisplayName() {
         return mDisplayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        mDisplayName = displayName;
     }
 
     /**
@@ -110,10 +95,10 @@ public class ScannedDevice {
         }
 
         // new a string buffer which length is twice the length of byte array
-        StringBuffer sb = new StringBuffer(bytes.length * 2);
+        StringBuilder sb = new StringBuilder(bytes.length * 2);
 
-        for (int index = 0; index < bytes.length; index++) {
-            int bt = bytes[index] & 0xff;
+        for (byte aByte : bytes) {
+            int bt = aByte & 0xff;
 
             if (bt < 0x10) {
                 sb.append("0");
@@ -123,9 +108,5 @@ public class ScannedDevice {
         }
 
         return sb.toString();
-    }
-
-    public long getLastUpdatedMs() {
-        return mLastUpdatedMs;
     }
 }

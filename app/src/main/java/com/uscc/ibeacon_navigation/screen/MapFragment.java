@@ -266,7 +266,7 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
                 l[i] = 10000.0;
 
             //場域內已知點數量
-            for (int i = 10; i <= 15; i++) {
+            for (int i = 1; i <= 9; i++) {
                 Set<String> keys = map.keySet();// 得到全部的key
                 Iterator<String> iter = keys.iterator() ;
 

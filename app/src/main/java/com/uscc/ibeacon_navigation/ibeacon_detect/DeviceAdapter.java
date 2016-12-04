@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.uscc.ibeacon_navigation.ibeacon_detect.ScannedDevice;
 import com.uscc.ibeacon_navigation.screen.R;
 
 public class DeviceAdapter extends ArrayAdapter<ScannedDevice> {
@@ -33,7 +32,7 @@ public class DeviceAdapter extends ArrayAdapter<ScannedDevice> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ScannedDevice item = (ScannedDevice) getItem(position);
+        ScannedDevice item = getItem(position);
 
         if (convertView == null) {
             convertView = mInflater.inflate(mResId, null);
@@ -43,7 +42,7 @@ public class DeviceAdapter extends ArrayAdapter<ScannedDevice> {
         TextView address = (TextView) convertView.findViewById(R.id.device_address);
         address.setText(item.getDevice().getAddress());
         TextView rssi = (TextView) convertView.findViewById(R.id.device_rssi);
-        rssi.setText(PREFIX_RSSI + Integer.toString(item.getRssi()));
+        rssi.setText(String.format("%s%s", PREFIX_RSSI, Integer.toString(item.getRssi())));
         if(item.getIBeacon() != null){
             TextView distance = (TextView) convertView.findViewById(R.id.device_distance);
             distance.setText(PREFIX_DISTANCE + Double.toString(item.getIBeacon().getDis()) + "m");
@@ -75,7 +74,6 @@ public class DeviceAdapter extends ArrayAdapter<ScannedDevice> {
         if ((newDevice == null) || (newDevice.getAddress() == null)) {
             return "";
         }
-        long now = System.currentTimeMillis();
 
         boolean contains = false;
         for (ScannedDevice device : mList) {
@@ -83,14 +81,13 @@ public class DeviceAdapter extends ArrayAdapter<ScannedDevice> {
                 contains = true;
                 // update
                 device.setRssi(rssi);
-                device.setLastUpdatedMs(now);
                 device.setScanRecord(scanRecord);
                 break;
             }
         }
         if (!contains) {
             // add new BluetoothDevice
-            mList.add(new ScannedDevice(newDevice, rssi, scanRecord, now));
+            mList.add(new ScannedDevice(newDevice, rssi, scanRecord));
         }
 
         // sort by RSSI
@@ -124,10 +121,9 @@ public class DeviceAdapter extends ArrayAdapter<ScannedDevice> {
                 }
             }
         }
-        String summary = "iBeacon:" + Integer.toString(iBeaconCount) + " (Total:"
-                + Integer.toString(totalCount) + ")";
 
-        return summary;
+        return "iBeacon:" + Integer.toString(iBeaconCount) + " (Total:"
+                + Integer.toString(totalCount) + ")";
     }
     
     public List<ScannedDevice> getList() {
