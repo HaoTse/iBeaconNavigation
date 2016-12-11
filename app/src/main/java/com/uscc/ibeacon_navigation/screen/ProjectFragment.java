@@ -151,8 +151,7 @@ public class ProjectFragment extends Fragment {
 
         popDialog.setTitle("評分");
         popDialog.setView(parent);
-        popDialog.setPositiveButton(android.R.string.ok,
-        new DialogInterface.OnClickListener() {
+        popDialog.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             // Button OK
             public void onClick(DialogInterface dialog, int which) {
                 double origin = Double.parseDouble(origin_rate);
@@ -168,14 +167,11 @@ public class ProjectFragment extends Fragment {
                 toast = Toast.makeText(getActivity(),
                         "成功評分", Toast.LENGTH_LONG);
                 toast.show();
-            }
-        })
-    .setNegativeButton("Cancel",
-        new DialogInterface.OnClickListener() {
-            // Button Cancel
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
+            }}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                // Button Cancel
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.cancel();
+                }
         });
         popDialog.create();
         popDialog.show();
@@ -275,7 +271,6 @@ public class ProjectFragment extends Fragment {
         }
         textStudentTitle.setText(R.string.proj_student);
         textStudents.setText(student);
-
     }
 
     public void getBitmapFromURL(String src) {

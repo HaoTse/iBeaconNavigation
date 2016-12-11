@@ -73,6 +73,8 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
     private double[] y_array = new double[21];
     double x;
     double y;
+    public static double currentX;
+    public static double currentY;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -324,6 +326,9 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
             x = Double.parseDouble(ss[0]);
             y = Double.parseDouble(ss[1]);
 
+            currentX = x;
+            currentY = y;
+
             mWebViewMap.loadUrl("javascript:refreshPoint(" + x + ", " + y + ")");
         }
     };
@@ -384,6 +389,15 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
 
         String aURL = "file:///android_asset/index.html";
         mWebViewMap.loadUrl(aURL);
+    }
+
+    // return current x & y;
+    public static double getCurrentX() {
+        return currentX;
+    }
+
+    public static double getCurrentY() {
+        return currentY;
     }
 
 }
