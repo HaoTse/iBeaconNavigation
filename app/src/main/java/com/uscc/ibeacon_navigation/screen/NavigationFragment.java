@@ -2,10 +2,10 @@ package com.uscc.ibeacon_navigation.screen;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,20 +15,27 @@ import android.widget.Button;
 import com.uscc.ibeacon_navigation.aid.SQLiteManager;
 import com.uscc.ibeacon_navigation.algorithm.AStar;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 public class NavigationFragment extends Fragment {
+
+    /*
+        ideal graph with 80 * 80 for its height and width value
+
+     */
 
     private View view;
     private AStar star;
     private SQLiteManager DB = null;
     private double[] x_array = new double[21];
     private double[] y_array = new double[21];
-    double x;
-    double y;
+    public double x;
+    public double y;
     private WebView mWebViewMap;
     private Button navigationButton;
+    private WebView myWebview;
 
 
     @Override
@@ -39,30 +46,32 @@ public class NavigationFragment extends Fragment {
 
         findView();
         receivcePosition();
+        this.star = new AStar(135, 110);
+
 
         final AlertDialog.Builder popDialog = new AlertDialog.Builder(getActivity());
         navigationButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // do navigation first
-                executeAStar();
+                executeAStar((int)x, (int)y, 100, 100);
 
-                // if error: alert
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("navigation route")
-                        .setMessage(executeAStar())
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // continue with delete
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // do nothing
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
+//                // if error: alert
+//                new AlertDialog.Builder(getActivity())
+//                        .setTitle("navigation route")
+//                        .setMessage("nothing")
+//                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                // continue with delete
+//                            }
+//                        })
+//                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                // do nothing
+//                            }
+//                        })
+//                        .setIcon(android.R.drawable.ic_dialog_alert)
+//                        .show();
             }
         });
 
@@ -70,8 +79,9 @@ public class NavigationFragment extends Fragment {
         return view;
     }
 
-    private void findView(){
-        this.navigationButton = (Button)view.findViewById(R.id.navigationButton);
+    private void findView() {
+        this.navigationButton = (Button) view.findViewById(R.id.navigationButton);
+        this.myWebview = (WebView)view.findViewById(R.id.navigationWebview);
     }
 
     private void receivcePosition() {
@@ -80,20 +90,34 @@ public class NavigationFragment extends Fragment {
         this.y = MapFragment.getCurrentY();
     }
 
-    private String executeAStar(){
-        this.star = new AStar();
+    private String executeAStar(int startX, int startY, int endX, int endY){
+        // graph size 80 * 80
+        //block_graph = new int[][]{{4, 1}, {0, 4}, {3, 1}, {2, 2}, {2, 1}, {4, 3}};
+        //block_graph = new int[][]{{45, 0}, {45, 1}, {45, 2}, {45, 3}, {45, 4}, {45, 5}, {45, 6}, {45, 7}};
         // grid, starting point, ending point, blocked point
-        Map<String, String> result = AStar.executeAStar(5, 5, 0, 0, 4, 4, new int[][]{{4, 1}, {0, 4}, {3, 1}, {2, 2}, {2, 1}, {4, 3}});
+        Map<Integer, Integer> result = AStar.executeAStar(135, 110, startX, startY, endX, endY);
+        Map<Integer, Integer> real_result = new HashMap<Integer, Integer>();
+        // iterate through and add all points: 145, 178
+        Iterator<Map.Entry<Integer, Integer>> iter = result.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<Integer, Integer> pair = (Map.Entry)iter.next();
+            Integer keyy = pair.getKey();
+            Integer valuee = pair.getValue();
+            real_result.put(keyy + 145, valuee + 178);
+        }
+        Log.e("original result", printMap(result));
+        Log.e("original result", printMap(real_result));
+
         // trace back the path
-        return printMap(result);
+        return printMap(real_result);
         //Toast.makeText(this.getContext(), printMap(result), Toast.LENGTH_LONG);
     }
 
-    public String printMap(Map<String, String> map) {
+    public String printMap(Map<Integer, Integer> map) {
         StringBuilder sb = new StringBuilder();
-        Iterator<Map.Entry<String, String>> iter = map.entrySet().iterator();
+        Iterator<Map.Entry<Integer, Integer>> iter = map.entrySet().iterator();
         while (iter.hasNext()) {
-            Map.Entry<String, String> entry = iter.next();
+            Map.Entry<Integer, Integer> entry = iter.next();
             sb.append(entry.getKey());
             sb.append('=').append('"');
             sb.append(entry.getValue());
@@ -105,9 +129,13 @@ public class NavigationFragment extends Fragment {
         return sb.toString();
     }
 
-    //
-    /*
-    private void fetchDataFromMysqlToSQLite(){
+
+    public void drawSvgStartingCenter(double x, double y) {
+
+    }
+
+
+    /* private void fetchDataFromMysqlToSQLite(){
         //Creating a string request
         StringRequest stringRequest = new StringRequest(MapFragment.DATA_URL,
                 new Response.Listener<String>() {
@@ -126,7 +154,7 @@ public class NavigationFragment extends Fragment {
                                 String mac_addr = jsonObject.getString("mac_addr");
                                 String name = jsonObject.getString("name");
                                 double x_coordinate = jsonObject.getDouble("x");
-                                double y_coordinate = jsonObject.getDouble("y");
+                                double y_coordinate = jsonObject.getDouble(d"y");
                                 DB.insert_ibeacon_data(beacon_id, mac_addr, name, x_coordinate, y_coordinate);
                             }
 
@@ -241,9 +269,7 @@ public class NavigationFragment extends Fragment {
             message.obj = coordinate;
             handler.sendMessage(message);
         }
-    }
-    */
-    ///
+    }    */
 
     private Handler handler = new Handler(){
         public void handleMessage(Message msg){
