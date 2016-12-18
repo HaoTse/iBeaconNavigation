@@ -103,7 +103,7 @@ public class NavigationFragment extends Fragment {
             Map.Entry<Integer, Integer> pair = (Map.Entry)iter.next();
             Integer keyy = pair.getKey();
             Integer valuee = pair.getValue();
-            real_result.put(keyy + 145, valuee + 178);
+            real_result.put(keyy*5 + 145, valuee*3 + 178);
         }
         Log.e("original result", printMap(result));
         Log.e("original result", printMap(real_result));
