@@ -34,6 +34,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.uscc.ibeacon_navigation.aid.SQLiteManager;
+import com.uscc.ibeacon_navigation.algorithm.AStar;
 import com.uscc.ibeacon_navigation.ibeacon_detect.DeviceAdapter;
 import com.uscc.ibeacon_navigation.ibeacon_detect.ScannedDevice;
 
@@ -45,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -52,11 +54,13 @@ import java.util.TimerTask;
 public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCallback{
 
     private View view;
+    private AStar star;
     private SQLiteManager DB = null;
     private BluetoothAdapter mBTAdapter;
     private DeviceAdapter mDeviceAdapter;
     private boolean mIsScanning;
     private Button locate_btn;
+    private Button navigationButton;
     private WebView mWebViewMap;
 
     private Timer tmr;
@@ -85,6 +89,9 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
         findView();
         openDB();
 
+        // navigation
+        star = new AStar(135, 110);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Android M Permission check
             if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -100,6 +107,14 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
                 startScan();
                 tmr = new Timer();
                 tmr.schedule(new locate_task(), DELAY_TIME, PERIOD_TIME);
+            }
+        });
+
+        navigationButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // do navigation first
+                executeAStar((int)currentX, (int)currentY, 100, 100);
             }
         });
 
@@ -152,6 +167,7 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
 
     private void findView(){
         locate_btn = (Button)view.findViewById(R.id.locate_btn);
+        navigationButton = (Button) view.findViewById(R.id.navigationButton);
         mWebViewMap = (WebView) view.findViewById(R.id.wvMap);
         readHtmlFormAssets();
     }
@@ -398,6 +414,55 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
 
     public static double getCurrentY() {
         return currentY;
+    }
+
+    // navigation
+    private void receivcePosition() {
+        // need to know my current position: call function() ?
+        this.x = MapFragment.getCurrentX();
+        this.y = MapFragment.getCurrentY();
+    }
+
+    private String executeAStar(int startX, int startY, int endX, int endY){
+        // graph size 80 * 80
+        //block_graph = new int[][]{{4, 1}, {0, 4}, {3, 1}, {2, 2}, {2, 1}, {4, 3}};
+        //block_graph = new int[][]{{45, 0}, {45, 1}, {45, 2}, {45, 3}, {45, 4}, {45, 5}, {45, 6}, {45, 7}};
+        // grid, starting point, ending point, blocked point
+        Map<Integer, Integer> result = AStar.executeAStar(135, 110, startX, startY, endX, endY);
+        Map<Integer, Integer> real_result = new HashMap<Integer, Integer>();
+        // iterate through and add all points: 145, 178
+        Iterator<Map.Entry<Integer, Integer>> iter = result.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<Integer, Integer> pair = (Map.Entry)iter.next();
+            Integer keyy = pair.getKey();
+            Integer valuee = pair.getValue();
+            real_result.put(keyy*5 + 145, valuee*3 + 178);
+            int tmp_x = keyy*5 + 145;
+            int tmp_y = valuee*3 + 178;
+            mWebViewMap.loadUrl("javascript:disPoint(" + tmp_x + ", " + tmp_y + ")");
+        }
+        Log.e("original result", printMap(result));
+        Log.e("original result", printMap(real_result));
+
+        // trace back the path
+        return printMap(real_result);
+        //Toast.makeText(this.getContext(), printMap(result), Toast.LENGTH_LONG);
+    }
+
+    public String printMap(Map<Integer, Integer> map) {
+        StringBuilder sb = new StringBuilder();
+        Iterator<Map.Entry<Integer, Integer>> iter = map.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<Integer, Integer> entry = iter.next();
+            sb.append(entry.getKey());
+            sb.append('=').append('"');
+            sb.append(entry.getValue());
+            sb.append('"');
+            if (iter.hasNext()) {
+                sb.append(',').append(' ');
+            }
+        }
+        return sb.toString();
     }
 
 }

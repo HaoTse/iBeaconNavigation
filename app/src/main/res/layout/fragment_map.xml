@@ -3,20 +3,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <Button
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_weight="9">
+
+        <Button
         android:id="@+id/locate_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/locate_btn"/>
+        android:text="@string/locate_btn"
+        android:layout_weight="1"/>
 
-    <WebView
-        android:id="@+id/wvMap"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-    <ListView
-        android:id="@+id/list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/navigation_btn"
+            android:id="@+id/navigationButton"
+            android:layout_weight="1"/>
 
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1">
+
+        <WebView
+            android:id="@+id/wvMap"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <ListView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"/>
+
+    </LinearLayout>
 </LinearLayout>

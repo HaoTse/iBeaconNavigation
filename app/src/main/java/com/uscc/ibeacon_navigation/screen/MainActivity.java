@@ -38,11 +38,6 @@ public class MainActivity extends AppCompatActivity {
                     FragmentTransaction ft = fm.beginTransaction();
                     ft.replace(R.id.layout_fragment, fragment, "FavoriteFragment");
                     ft.commit();
-                }else if (tabId == R.id.tab_navigation) {
-                    fragment = new NavigationFragment();
-                    FragmentTransaction ft = fm.beginTransaction();
-                    ft.replace(R.id.layout_fragment, fragment, "NavigationFragment");
-                    ft.commit();
                 }else if(tabId == R.id.tab_map){
                     fragment = new MapFragment();
                     FragmentTransaction ft = fm.beginTransaction();

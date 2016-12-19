@@ -45,6 +45,15 @@
 				location.attr({id: "location", x: x, y: y, fill:"red"});
 			}
 
+			function disPoint(x, y){
+				var s = Snap("#map-svg");
+				var point = s.group();
+				$("#x").text(x);
+				$("#y").text(y);
+				var location = point.circle(x, y, 1);
+				location.attr({name: "point", x: x, y: y, fill:"blue"});
+			}
+
 			
 
 		</script>

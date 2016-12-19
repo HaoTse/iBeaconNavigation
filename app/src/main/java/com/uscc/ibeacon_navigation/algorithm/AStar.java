@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-/**
- * Created by Oslo on 12/11/16.
- */
 public class AStar {
 
     public static Avertex [][] graph;
@@ -47,7 +44,7 @@ public class AStar {
         for(int i = 0; i< 60; i++) {
             for (int j = 45; j<110;j++) {
                 this.block_graph.put(new Integer(i), new Integer(j));
-                System.out.printf("%d, %d\n", i, j);
+                //System.out.printf("%d, %d\n", i, j);
             }
         }
 
@@ -55,7 +52,7 @@ public class AStar {
         for (int i = 6; i < 59; i++) {
             for (int j = 0; j< 4; j++) {
                 this.block_graph.put(new Integer(i), new Integer(j));
-                System.out.printf("%d, %d\n", i, j);
+                //System.out.printf("%d, %d\n", i, j);
             }
         }
 
@@ -63,7 +60,7 @@ public class AStar {
         for (int i = 60; i< 66;i++) {
             for (int j = 46; j < 110; j++) {
                 this.block_graph.put(new Integer(i), new Integer(j));
-                System.out.printf("%d, %d\n", i, j);
+                //System.out.printf("%d, %d\n", i, j);
             }
         }
 
@@ -71,95 +68,95 @@ public class AStar {
         for (int i = 66; i< 81;i++) {
             for (int j = 43; j < 110; j++) {
                 this.block_graph.put(new Integer(i), new Integer(j));
-                System.out.printf("%d, %d\n", i, j);
+                //System.out.printf("%d, %d\n", i, j);
             }
         }
 
         // middle bottom triangle: 5
         for (int j = 43; j< 110;j++) {
             this.block_graph.put(new Integer(81), new Integer(j));
-            System.out.printf("%d, %d\n", 81, j);
+            //System.out.printf("%d, %d\n", 81, j);
         }
         for (int j = 48; j< 110;j++) {
             this.block_graph.put(new Integer(82), new Integer(j));
-            System.out.printf("%d, %d\n", 81, j);
+            //System.out.printf("%d, %d\n", 81, j);
         }
         for (int j = 51; j< 110;j++) {
             this.block_graph.put(new Integer(83), new Integer(j));
-            System.out.printf("%d, %d\n", 83, j);
+            //System.out.printf("%d, %d\n", 83, j);
         }
         for (int j = 55; j< 110;j++) {
             this.block_graph.put(new Integer(84), new Integer(j));
-            System.out.printf("%d, %d\n", 84, j);
+            //System.out.printf("%d, %d\n", 84, j);
         }
         for (int j = 59; j< 110;j++) {
             this.block_graph.put(new Integer(85), new Integer(j));
-            System.out.printf("%d, %d\n", 85, j);
+            //System.out.printf("%d, %d\n", 85, j);
         }
         for (int j = 62; j< 110;j++) {
             this.block_graph.put(new Integer(86), new Integer(j));
-            System.out.printf("%d, %d\n", 86, j);
+            //System.out.printf("%d, %d\n", 86, j);
         }
         for (int j = 66; j< 110;j++) {
             this.block_graph.put(new Integer(87), new Integer(j));
-            System.out.printf("%d, %d\n", 87, j);
+            //System.out.printf("%d, %d\n", 87, j);
         }
         for (int j = 71; j< 110;j++) {
             this.block_graph.put(new Integer(88), new Integer(j));
-            System.out.printf("%d, %d\n", 88, j);
+            //System.out.printf("%d, %d\n", 88, j);
         }
         for (int j = 75; j< 110;j++) {
             this.block_graph.put(new Integer(89), new Integer(j));
-            System.out.printf("%d, %d\n", 89, j);
+            //System.out.printf("%d, %d\n", 89, j);
         }
         for (int j = 79; j< 110;j++) {
             this.block_graph.put(new Integer(90), new Integer(j));
-            System.out.printf("%d, %d\n", 90, j);
+            //System.out.printf("%d, %d\n", 90, j);
         }
         for (int j = 84; j< 110;j++) {
             this.block_graph.put(new Integer(91), new Integer(j));
-            System.out.printf("%d, %d\n", 91, j);
+            //System.out.printf("%d, %d\n", 91, j);
         }
         for (int j = 88; j< 110;j++) {
             this.block_graph.put(new Integer(92), new Integer(j));
-            System.out.printf("%d, %d\n", 92, j);
+            //System.out.printf("%d, %d\n", 92, j);
         }
         for (int j = 92; j< 110;j++) {
             this.block_graph.put(new Integer(93), new Integer(j));
-            System.out.printf("%d, %d\n", 93, j);
+            //System.out.printf("%d, %d\n", 93, j);
         }
         for (int j = 96; j< 110;j++) {
             this.block_graph.put(new Integer(94), new Integer(j));
-            System.out.printf("%d, %d\n", 94, j);
+            //System.out.printf("%d, %d\n", 94, j);
         }
         for (int j = 100; j< 110;j++) {
             this.block_graph.put(new Integer(95), new Integer(j));
-            System.out.printf("%d, %d\n", 95, j);
+            //System.out.printf("%d, %d\n", 95, j);
         }
 
         // bottom right blocks
         for (int i = 97; i < 105;i++) {
             for (int j = 105; j < 110;j++) {
                 this.block_graph.put(new Integer(i), new Integer(j));
-                System.out.printf("%d, %d\n", i, j);
+                //System.out.printf("%d, %d\n", i, j);
             }
         }
         for (int j = 104; j< 110;j++) {
             this.block_graph.put(new Integer(106), new Integer(j));
-            System.out.printf("%d, %d\n", 106, j);
+            //System.out.printf("%d, %d\n", 106, j);
         }
         for (int j = 105; j< 110;j++) {
             this.block_graph.put(new Integer(107), new Integer(j));
-            System.out.printf("%d, %d\n", 107, j);
+            //System.out.printf("%d, %d\n", 107, j);
         }
         for (int j = 103; j< 110;j++) {
             this.block_graph.put(new Integer(108), new Integer(j));
-            System.out.printf("%d, %d\n", 108, j);
+            //System.out.printf("%d, %d\n", 108, j);
         }
         for (int i = 109; i < 132;i++) {
             for (int j = 107; j < 110;j++) {
                 this.block_graph.put(new Integer(i), new Integer(j));
-                System.out.printf("%d, %d\n", i, j);
+                //System.out.printf("%d, %d\n", i, j);
             }
         }
 
@@ -167,7 +164,7 @@ public class AStar {
         for (int i = 132; i < 135;i++) {
             for (int j = 0; j < 110;j++) {
                 this.block_graph.put(new Integer(i), new Integer(j));
-                System.out.printf("%d, %d\n", i, j);
+                //System.out.printf("%d, %d\n", i, j);
             }
         }
 
@@ -175,101 +172,101 @@ public class AStar {
         // borders for top-left classrooms(2)
         for (int j = 3; j < 33; j++) {
             this.block_graph.put(new Integer(6), new Integer(j));
-            System.out.printf("%d, %d\n", 6, j);
+            //System.out.printf("%d, %d\n", 6, j);
         }
         for (int j = 3; j < 33; j++) {
             this.block_graph.put(new Integer(32), new Integer(j));
-            System.out.printf("%d, %d\n", 32, j);
+            //System.out.printf("%d, %d\n", 32, j);
         }
         for (int j = 3; j < 33; j++) {
             this.block_graph.put(new Integer(58), new Integer(j));
-            System.out.printf("%d, %d\n", 58, j);
+            //System.out.printf("%d, %d\n", 58, j);
         }
         for (int i = 10; i < 29; i++) {
             this.block_graph.put(new Integer(i), new Integer(33));
-            System.out.printf("%d, %d\n", i, 33);
+            //System.out.printf("%d, %d\n", i, 33);
         }
         for (int i = 35; i < 55; i++) {
             this.block_graph.put(new Integer(i), new Integer(33));
-            System.out.printf("%d, %d\n", i, 33);
+            //System.out.printf("%d, %d\n", i, 33);
         }
 
         // borders for top-right spaces
         for (int i = 100; i < 132; i++) {
             for (int j = 0; j < 3; j++) {
                 this.block_graph.put(new Integer(i), new Integer(j));
-                System.out.printf("%d, %d\n", i, j);
+                //System.out.printf("%d, %d\n", i, j);
             }
         }
         for (int i = 104; i < 132; i++) {
             for (int j = 3; j < 25; j++) {
                 this.block_graph.put(new Integer(i), new Integer(j));
-                System.out.printf("%d, %d\n", i, j);
+                //System.out.printf("%d, %d\n", i, j);
             }
         }
         for (int i = 108; i < 132; i++) {
             for (int j = 25; j < 46; j++) {
                 this.block_graph.put(new Integer(i), new Integer(j));
-                System.out.printf("%d, %d\n", i, j);
+                //System.out.printf("%d, %d\n", i, j);
             }
         }
 
         // right-bottom classrooms
         for (int j = 46; j < 48; j++) {
             this.block_graph.put(new Integer(118), new Integer(j));
-            System.out.printf("%d, %d\n", 118, j);
+            //System.out.printf("%d, %d\n", 118, j);
         }
         for (int j = 46; j < 48; j++) {
             this.block_graph.put(new Integer(119), new Integer(j));
-            System.out.printf("%d, %d\n", 119, j);
+            //System.out.printf("%d, %d\n", 119, j);
         }
         for (int j = 46; j < 52; j++) {
             this.block_graph.put(new Integer(120), new Integer(j));
-            System.out.printf("%d, %d\n", 120, j);
+            //System.out.printf("%d, %d\n", 120, j);
         }
         for (int j = 46; j < 56; j++) {
             this.block_graph.put(new Integer(121), new Integer(j));
-            System.out.printf("%d, %d\n", 121, j);
+            //System.out.printf("%d, %d\n", 121, j);
         }
         for (int j = 46; j < 60; j++) {
             this.block_graph.put(new Integer(122), new Integer(j));
-            System.out.printf("%d, %d\n", 122, j);
+            //System.out.printf("%d, %d\n", 122, j);
         }
         for (int j = 46; j < 64; j++) {
             this.block_graph.put(new Integer(123), new Integer(j));
-            System.out.printf("%d, %d\n", 123, j);
+            //System.out.printf("%d, %d\n", 123, j);
         }
         for (int j = 46; j < 68; j++) {
             this.block_graph.put(new Integer(124), new Integer(j));
-            System.out.printf("%d, %d\n", 124, j);
+            //System.out.printf("%d, %d\n", 124, j);
         }
         for (int j = 46; j < 72; j++) {
             this.block_graph.put(new Integer(125), new Integer(j));
-            System.out.printf("%d, %d\n", 125, j);
+            //System.out.printf("%d, %d\n", 125, j);
         }
         for (int j = 46; j < 76; j++) {
             this.block_graph.put(new Integer(126), new Integer(j));
-            System.out.printf("%d, %d\n", 126, j);
+            //System.out.printf("%d, %d\n", 126, j);
         }
         for (int j = 46; j < 80; j++) {
             this.block_graph.put(new Integer(127), new Integer(j));
-            System.out.printf("%d, %d\n", 127, j);
+            //System.out.printf("%d, %d\n", 127, j);
         }
         for (int j = 46; j < 84; j++) {
             this.block_graph.put(new Integer(128), new Integer(j));
-            System.out.printf("%d, %d\n", 128, j);
+            //System.out.printf("%d, %d\n", 128, j);
         }
         for (int j = 46; j < 88; j++) {
             this.block_graph.put(new Integer(129), new Integer(j));
-            System.out.printf("%d, %d\n", 129, j);
+            //System.out.printf("%d, %d\n", 129, j);
         }
         for (int j = 46; j < 90; j++) {
             this.block_graph.put(new Integer(130), new Integer(j));
-            System.out.printf("%d, %d\n", 130, j);
+            //System.out.printf("%d, %d\n", 130, j);
         }
         for (int j = 46; j < 94; j++) {
             this.block_graph.put(new Integer(131), new Integer(j));
-            System.out.printf("%d, %d\n", 131, j);
+            //System.out.printf("%d, %d\n", 131, j);
         }
 
 
@@ -444,7 +441,7 @@ public class AStar {
     }
 
     public static Map<Integer, Integer> executeAStar(int x, int y, int startX, int startY, int endX, int endY) {
-        System.out.println("start A* algorithm...\n");
+        //System.out.println("start A* algorithm...\n");
 
         graph = new Avertex[x][y];
         closedList = new boolean[x][y];
@@ -474,18 +471,18 @@ public class AStar {
         AStarAlgorithm();
 
         // print out the scores for cells
-        System.out.println("\nScores: \n");
+        //System.out.println("\nScores: \n");
         for (int i = 0; i< x; ++i) {
             for (int j = 0;j<y;++j) {
                 if (graph[i][j] != null){
-                    System.out.printf("%-3d ", graph[i][j].finalCost);
+                    //System.out.printf("%-3d ", graph[i][j].finalCost);
                 } else {
-                    System.out.print("BL ");
+                    //System.out.print("BL ");
                 }
             }
-            System.out.println();
+            //System.out.println();
         }
-        System.out.println();
+        //System.out.println();
 
         Map<Integer, Integer> result = new HashMap<Integer, Integer>();
         // trace back the path

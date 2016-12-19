@@ -6,10 +6,6 @@
         icon="@drawable/ic_favorites"
         title="Favorites" />
     <tab
-        id="@+id/tab_navigation"
-        icon="@drawable/ic_navigation"
-        title="Navigation" />
-    <tab
         id="@+id/tab_map"
         icon="@drawable/ic_map"
         title="Map" />
