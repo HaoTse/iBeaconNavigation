@@ -75,8 +75,10 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
 
     private double[] x_array = new double[21];
     private double[] y_array = new double[21];
-    double x;
-    double y;
+    private static double x;
+    private static double y;
+    private static double previous_x;
+    private static double previous_y;
     public static double currentX;
     public static double currentY;
 
@@ -197,6 +199,10 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
         mDeviceAdapter = new DeviceAdapter(getActivity(), R.layout.listitem_device,
                 new ArrayList<ScannedDevice>());
         deviceListView.setAdapter(mDeviceAdapter);
+
+        // init predicted location
+        previous_x = 500;
+        previous_y = 500;
     }
 
     private void fetchDataFromMysqlToSQLite(){
@@ -345,7 +351,12 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
             currentX = x;
             currentY = y;
 
-            mWebViewMap.loadUrl("javascript:refreshPoint(" + x + ", " + y + ")");
+            if(Math.abs(x-previous_x) < 1250 && Math.abs(y-previous_y) < 1250){
+                previous_x = x;
+                previous_y = y;
+            }
+
+            mWebViewMap.loadUrl("javascript:refreshPoint(" + previous_x + ", " + previous_y + ")");
         }
     };
 
