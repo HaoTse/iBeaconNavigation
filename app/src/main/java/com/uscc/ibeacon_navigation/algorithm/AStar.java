@@ -12,12 +12,16 @@ public class AStar {
 
     public static int startX;
     public static int startY;
+    public static int graphX;
+    public static int graphY;
     public static int endX;
     public static int endY;
     private static HashMap<Integer, Integer> block_graph;
 
     public AStar(int graph_x_size, int graph_y_size) {
-        this.graph = new Avertex[graph_x_size][graph_y_size];
+        graphX = graph_x_size;
+        graphY = graph_y_size;
+        this.graph = new Avertex[graphX][graphY];
         // initialize blocked_graph here
         block_graph = new HashMap<Integer, Integer>();
         // add all blocked_space to blocked_graph

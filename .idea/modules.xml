@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/capstoneAndroid.iml" filepath="$PROJECT_DIR$/capstoneAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/iBeaconNavigation.iml" filepath="$PROJECT_DIR$/iBeaconNavigation.iml" />
     </modules>
   </component>
