@@ -116,7 +116,10 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
             @Override
             public void onClick(View view) {
                 // do navigation first
-                executeAStar((int)currentX, (int)currentY, 100, 100);
+//                executeAStar((int)currentX, (int)currentY, 100, 100);
+                executeAStar(0, 0, 20, 30);
+                //executeAStar(20, 30, 54, 60);
+                //executeAStar(54, 60, 110, 84);
             }
         });
 
@@ -435,11 +438,8 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
     }
 
     private String executeAStar(int startX, int startY, int endX, int endY){
-        // graph size 80 * 80
-        //block_graph = new int[][]{{4, 1}, {0, 4}, {3, 1}, {2, 2}, {2, 1}, {4, 3}};
-        //block_graph = new int[][]{{45, 0}, {45, 1}, {45, 2}, {45, 3}, {45, 4}, {45, 5}, {45, 6}, {45, 7}};
         // grid, starting point, ending point, blocked point
-        Map<Integer, Integer> result = AStar.executeAStar(135, 110, startX, startY, endX, endY);
+        Map<Integer, Integer> result = AStar.executeAStar(140, 120, startX, startY, endX, endY);
         Map<Integer, Integer> real_result = new HashMap<Integer, Integer>();
         // iterate through and add all points: 145, 178
         Iterator<Map.Entry<Integer, Integer>> iter = result.entrySet().iterator();
@@ -447,17 +447,16 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
             Map.Entry<Integer, Integer> pair = (Map.Entry)iter.next();
             Integer keyy = pair.getKey();
             Integer valuee = pair.getValue();
-            real_result.put(keyy*5 + 145, valuee*3 + 178);
-            int tmp_x = keyy*5 + 145;
-            int tmp_y = valuee*3 + 178;
+            real_result.put(keyy + 145, valuee + 177);
+            int tmp_x = keyy + 145;
+            int tmp_y = valuee + 177;
             mWebViewMap.loadUrl("javascript:disPoint(" + tmp_x + ", " + tmp_y + ")");
         }
         Log.e("original result", printMap(result));
-        Log.e("original result", printMap(real_result));
+        Log.e("real result", printMap(real_result));
 
         // trace back the path
         return printMap(real_result);
-        //Toast.makeText(this.getContext(), printMap(result), Toast.LENGTH_LONG);
     }
 
     public String printMap(Map<Integer, Integer> map) {
