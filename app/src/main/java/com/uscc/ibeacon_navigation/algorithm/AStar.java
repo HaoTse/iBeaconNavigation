@@ -67,9 +67,14 @@ public class AStar {
             }
         }
 
-        // middle bottom triangle: 5
-        
+        // middle bottom triangle
+        for (int i = 87; i < 104; i++) {
+            for (int j = 50; j< 117; j = j + 4) {
+                this.block_graph.put(new Integer(i), new Integer(j));
+            }
+        }
 
+        /*
         // bottom right blocks
         for (int i = 97; i < 105;i++) {
             for (int j = 105; j < 110;j++) {
@@ -104,32 +109,30 @@ public class AStar {
             }
         }
 
+        */
 
-        // borders for top-left classrooms(2)
-        for (int j = 3; j < 33; j++) {
-            this.block_graph.put(new Integer(6), new Integer(j));
+
+        // borders for top-left classrooms
+        for (int j = 4; j < 36; j++) {
+            this.block_graph.put(new Integer(7), new Integer(j));
             //System.out.printf("%d, %d\n", 6, j);
         }
-        for (int j = 3; j < 33; j++) {
-            this.block_graph.put(new Integer(32), new Integer(j));
+        for (int j = 4; j < 36; j++) {
+            this.block_graph.put(new Integer(34), new Integer(j));
             //System.out.printf("%d, %d\n", 32, j);
         }
-        for (int j = 3; j < 33; j++) {
-            this.block_graph.put(new Integer(58), new Integer(j));
+        for (int j = 4; j < 36; j++) {
+            this.block_graph.put(new Integer(62), new Integer(j));
             //System.out.printf("%d, %d\n", 58, j);
         }
-        for (int i = 10; i < 29; i++) {
-            this.block_graph.put(new Integer(i), new Integer(33));
-            this.block_graph.put(new Integer(i), new Integer(34));
-
-            //System.out.printf("%d, %d\n", i, 33);
+        for (int i = 10; i < 31; i++) {
+            this.block_graph.put(new Integer(i), new Integer(36));
         }
-        for (int i = 35; i < 55; i++) {
-            this.block_graph.put(new Integer(i), new Integer(33));
-            this.block_graph.put(new Integer(i), new Integer(34));
-            //System.out.printf("%d, %d\n", i, 33);
+        for (int i = 38; i < 59; i++) {
+            this.block_graph.put(new Integer(i), new Integer(36));
         }
 
+        /*
         // borders for top-right spaces
         for (int i = 100; i < 132; i++) {
             for (int j = 0; j < 3; j++) {
@@ -207,100 +210,176 @@ public class AStar {
             this.block_graph.put(new Integer(131), new Integer(j));
             //System.out.printf("%d, %d\n", 131, j);
         }
+        */
 
+        this.block_graph.put(new Integer(99), new Integer(61));
+        this.block_graph.put(new Integer(99), new Integer(60));
+        this.block_graph.put(new Integer(100), new Integer(61));
+        this.block_graph.put(new Integer(100), new Integer(60));
+        this.block_graph.put(new Integer(101), new Integer(61));
+        this.block_graph.put(new Integer(101), new Integer(60));
+        this.block_graph.put(new Integer(102), new Integer(61));
+        this.block_graph.put(new Integer(102), new Integer(60));
+        this.block_graph.put(new Integer(103), new Integer(60));
+        this.block_graph.put(new Integer(103), new Integer(59));
+        this.block_graph.put(new Integer(104), new Integer(60));
+        this.block_graph.put(new Integer(104), new Integer(59));
+        this.block_graph.put(new Integer(105), new Integer(60));
+        this.block_graph.put(new Integer(105), new Integer(59));
+        this.block_graph.put(new Integer(104), new Integer(60));
+        this.block_graph.put(new Integer(105), new Integer(59));
+        this.block_graph.put(new Integer(105), new Integer(59));
+        this.block_graph.put(new Integer(104), new Integer(58));
+        this.block_graph.put(new Integer(105), new Integer(59));
+        this.block_graph.put(new Integer(105), new Integer(58));
+        this.block_graph.put(new Integer(104), new Integer(59));
+        this.block_graph.put(new Integer(105), new Integer(58));
+        this.block_graph.put(new Integer(105), new Integer(58));
+        this.block_graph.put(new Integer(104), new Integer(57));
+        this.block_graph.put(new Integer(105), new Integer(58));
+        this.block_graph.put(new Integer(105), new Integer(57));
+        this.block_graph.put(new Integer(106), new Integer(58));
+        this.block_graph.put(new Integer(106), new Integer(57));
+        this.block_graph.put(new Integer(107), new Integer(58));
+        this.block_graph.put(new Integer(107), new Integer(57));
+        this.block_graph.put(new Integer(108), new Integer(58));
+        this.block_graph.put(new Integer(108), new Integer(57));
+        this.block_graph.put(new Integer(109), new Integer(57));
+        this.block_graph.put(new Integer(109), new Integer(56));
+        this.block_graph.put(new Integer(110), new Integer(57));
+        this.block_graph.put(new Integer(110), new Integer(56));
+        this.block_graph.put(new Integer(111), new Integer(57));
+        this.block_graph.put(new Integer(111), new Integer(56));
+        this.block_graph.put(new Integer(112), new Integer(57));
+        this.block_graph.put(new Integer(112), new Integer(56));
+        this.block_graph.put(new Integer(113), new Integer(56));
+        this.block_graph.put(new Integer(113), new Integer(55));
+        this.block_graph.put(new Integer(114), new Integer(56));
+        this.block_graph.put(new Integer(114), new Integer(55));
+        this.block_graph.put(new Integer(115), new Integer(56));
+        this.block_graph.put(new Integer(115), new Integer(55));
+        this.block_graph.put(new Integer(116), new Integer(55));
+        this.block_graph.put(new Integer(116), new Integer(54));
+        this.block_graph.put(new Integer(117), new Integer(55));
+        this.block_graph.put(new Integer(117), new Integer(54));
+        this.block_graph.put(new Integer(118), new Integer(55));
+        this.block_graph.put(new Integer(118), new Integer(54));
+        this.block_graph.put(new Integer(119), new Integer(55));
+        this.block_graph.put(new Integer(119), new Integer(54));
+        this.block_graph.put(new Integer(120), new Integer(54));
+        this.block_graph.put(new Integer(120), new Integer(53));
+        this.block_graph.put(new Integer(121), new Integer(54));
+        this.block_graph.put(new Integer(121), new Integer(53));
+        this.block_graph.put(new Integer(122), new Integer(54));
+        this.block_graph.put(new Integer(122), new Integer(53));
+        this.block_graph.put(new Integer(123), new Integer(54));
+        this.block_graph.put(new Integer(123), new Integer(53));
+        this.block_graph.put(new Integer(124), new Integer(54));
+        this.block_graph.put(new Integer(124), new Integer(53));
+        this.block_graph.put(new Integer(125), new Integer(54));
+        this.block_graph.put(new Integer(125), new Integer(53));
+        this.block_graph.put(new Integer(126), new Integer(54));
+        this.block_graph.put(new Integer(126), new Integer(53));
+        this.block_graph.put(new Integer(127), new Integer(54));
+        this.block_graph.put(new Integer(127), new Integer(53));
 
-        // right-bottom classrooms' borders
-        this.block_graph.put(new Integer(92), new Integer(56));
-        this.block_graph.put(new Integer(93), new Integer(56));
-        this.block_graph.put(new Integer(94), new Integer(56));
-        this.block_graph.put(new Integer(95), new Integer(55));
-        this.block_graph.put(new Integer(96), new Integer(55));
-        this.block_graph.put(new Integer(97), new Integer(55));
-        this.block_graph.put(new Integer(98), new Integer(54));
-        this.block_graph.put(new Integer(99), new Integer(54));
-        this.block_graph.put(new Integer(100), new Integer(54));
-        this.block_graph.put(new Integer(101), new Integer(53));
-        this.block_graph.put(new Integer(102), new Integer(53));
-        this.block_graph.put(new Integer(103), new Integer(53));
-        this.block_graph.put(new Integer(104), new Integer(52));
-        this.block_graph.put(new Integer(105), new Integer(52));
-        this.block_graph.put(new Integer(106), new Integer(52));
-        this.block_graph.put(new Integer(107), new Integer(51));
-        this.block_graph.put(new Integer(108), new Integer(51));
-        this.block_graph.put(new Integer(109), new Integer(51));
-        this.block_graph.put(new Integer(110), new Integer(50));
-        this.block_graph.put(new Integer(111), new Integer(50));
-        this.block_graph.put(new Integer(112), new Integer(50));
-        this.block_graph.put(new Integer(113), new Integer(49));
-        this.block_graph.put(new Integer(114), new Integer(49));
-        this.block_graph.put(new Integer(115), new Integer(49));
-        this.block_graph.put(new Integer(116), new Integer(48));
-        this.block_graph.put(new Integer(117), new Integer(48));
+        this.block_graph.put(new Integer(106), new Integer(87));
+        this.block_graph.put(new Integer(106), new Integer(86));
+        this.block_graph.put(new Integer(107), new Integer(87));
+        this.block_graph.put(new Integer(107), new Integer(86));
+        this.block_graph.put(new Integer(108), new Integer(87));
+        this.block_graph.put(new Integer(108), new Integer(86));
+        this.block_graph.put(new Integer(109), new Integer(87));
+        this.block_graph.put(new Integer(109), new Integer(86));
+        this.block_graph.put(new Integer(110), new Integer(86));
+        this.block_graph.put(new Integer(110), new Integer(85));
+        this.block_graph.put(new Integer(111), new Integer(86));
+        this.block_graph.put(new Integer(111), new Integer(85));
+        this.block_graph.put(new Integer(112), new Integer(86));
+        this.block_graph.put(new Integer(112), new Integer(85));
+        this.block_graph.put(new Integer(113), new Integer(86));
+        this.block_graph.put(new Integer(113), new Integer(85));
+        this.block_graph.put(new Integer(114), new Integer(85));
+        this.block_graph.put(new Integer(114), new Integer(84));
+        this.block_graph.put(new Integer(115), new Integer(85));
+        this.block_graph.put(new Integer(115), new Integer(84));
+        this.block_graph.put(new Integer(116), new Integer(85));
+        this.block_graph.put(new Integer(116), new Integer(84));
+        this.block_graph.put(new Integer(117), new Integer(85));
+        this.block_graph.put(new Integer(117), new Integer(84));
+        this.block_graph.put(new Integer(118), new Integer(84));
+        this.block_graph.put(new Integer(118), new Integer(83));
+        this.block_graph.put(new Integer(119), new Integer(84));
+        this.block_graph.put(new Integer(119), new Integer(83));
+        this.block_graph.put(new Integer(120), new Integer(84));
+        this.block_graph.put(new Integer(120), new Integer(83));
+        this.block_graph.put(new Integer(121), new Integer(84));
+        this.block_graph.put(new Integer(121), new Integer(83));
+        this.block_graph.put(new Integer(122), new Integer(83));
+        this.block_graph.put(new Integer(122), new Integer(82));
+        this.block_graph.put(new Integer(123), new Integer(83));
+        this.block_graph.put(new Integer(123), new Integer(82));
+        this.block_graph.put(new Integer(124), new Integer(83));
+        this.block_graph.put(new Integer(124), new Integer(82));
+        this.block_graph.put(new Integer(125), new Integer(83));
+        this.block_graph.put(new Integer(125), new Integer(82));
+        this.block_graph.put(new Integer(126), new Integer(82));
+        this.block_graph.put(new Integer(126), new Integer(81));
+        this.block_graph.put(new Integer(127), new Integer(82));
+        this.block_graph.put(new Integer(127), new Integer(81));
+        this.block_graph.put(new Integer(128), new Integer(82));
+        this.block_graph.put(new Integer(128), new Integer(81));
+        this.block_graph.put(new Integer(129), new Integer(82));
+        this.block_graph.put(new Integer(129), new Integer(81));
+        this.block_graph.put(new Integer(130), new Integer(82));
+        this.block_graph.put(new Integer(130), new Integer(81));
+        this.block_graph.put(new Integer(131), new Integer(81));
+        this.block_graph.put(new Integer(131), new Integer(80));
+        this.block_graph.put(new Integer(132), new Integer(81));
+        this.block_graph.put(new Integer(132), new Integer(80));
+        this.block_graph.put(new Integer(133), new Integer(81));
+        this.block_graph.put(new Integer(133), new Integer(80));
+        this.block_graph.put(new Integer(134), new Integer(81));
+        this.block_graph.put(new Integer(134), new Integer(80));
 
-        this.block_graph.put(new Integer(98), new Integer(81));
-        this.block_graph.put(new Integer(99), new Integer(81));
-        this.block_graph.put(new Integer(100), new Integer(80));
-        this.block_graph.put(new Integer(101), new Integer(80));
-        this.block_graph.put(new Integer(102), new Integer(80));
-        this.block_graph.put(new Integer(103), new Integer(79));
+        this.block_graph.put(new Integer(100), new Integer(65));
+        this.block_graph.put(new Integer(100), new Integer(66));
+        this.block_graph.put(new Integer(100), new Integer(67));
+        this.block_graph.put(new Integer(101), new Integer(68));
+        this.block_graph.put(new Integer(101), new Integer(69));
+        this.block_graph.put(new Integer(101), new Integer(70));
+        this.block_graph.put(new Integer(102), new Integer(71));
+        this.block_graph.put(new Integer(102), new Integer(72));
+        this.block_graph.put(new Integer(102), new Integer(73));
+        this.block_graph.put(new Integer(103), new Integer(74));
+        this.block_graph.put(new Integer(103), new Integer(75));
+        this.block_graph.put(new Integer(103), new Integer(76));
+        this.block_graph.put(new Integer(104), new Integer(77));
+        this.block_graph.put(new Integer(104), new Integer(78));
         this.block_graph.put(new Integer(104), new Integer(79));
-        this.block_graph.put(new Integer(105), new Integer(79));
-        this.block_graph.put(new Integer(106), new Integer(78));
-        this.block_graph.put(new Integer(107), new Integer(78));
-        this.block_graph.put(new Integer(108), new Integer(78));
-        this.block_graph.put(new Integer(109), new Integer(77));
-        this.block_graph.put(new Integer(110), new Integer(77));
-        this.block_graph.put(new Integer(111), new Integer(77));
-        this.block_graph.put(new Integer(112), new Integer(76));
-        this.block_graph.put(new Integer(113), new Integer(76));
-        this.block_graph.put(new Integer(114), new Integer(76));
-        this.block_graph.put(new Integer(115), new Integer(75));
-        this.block_graph.put(new Integer(116), new Integer(75));
-        this.block_graph.put(new Integer(117), new Integer(75));
-        this.block_graph.put(new Integer(118), new Integer(74));
-        this.block_graph.put(new Integer(119), new Integer(74));
-        this.block_graph.put(new Integer(120), new Integer(74));
-        this.block_graph.put(new Integer(121), new Integer(73));
-        this.block_graph.put(new Integer(122), new Integer(73));
-        this.block_graph.put(new Integer(123), new Integer(73));
+        this.block_graph.put(new Integer(105), new Integer(80));
+        this.block_graph.put(new Integer(105), new Integer(81));
+        this.block_graph.put(new Integer(105), new Integer(82));
 
-        this.block_graph.put(new Integer(93), new Integer(58));
-        this.block_graph.put(new Integer(93), new Integer(59));
-        this.block_graph.put(new Integer(94), new Integer(60));
-        this.block_graph.put(new Integer(94), new Integer(61));
-        this.block_graph.put(new Integer(94), new Integer(62));
-        this.block_graph.put(new Integer(94), new Integer(63));
-        this.block_graph.put(new Integer(95), new Integer(64));
-        this.block_graph.put(new Integer(95), new Integer(65));
-        this.block_graph.put(new Integer(95), new Integer(66));
-        this.block_graph.put(new Integer(95), new Integer(67));
-        this.block_graph.put(new Integer(96), new Integer(68));
-        this.block_graph.put(new Integer(96), new Integer(69));
-        this.block_graph.put(new Integer(96), new Integer(70));
-        this.block_graph.put(new Integer(96), new Integer(71));
-        this.block_graph.put(new Integer(97), new Integer(72));
-        this.block_graph.put(new Integer(97), new Integer(73));
-        this.block_graph.put(new Integer(97), new Integer(74));
-        this.block_graph.put(new Integer(97), new Integer(75));
-
-        this.block_graph.put(new Integer(99), new Integer(84));
-        this.block_graph.put(new Integer(99), new Integer(85));
-        this.block_graph.put(new Integer(99), new Integer(86));
-        this.block_graph.put(new Integer(99), new Integer(87));
-        this.block_graph.put(new Integer(100), new Integer(88));
-        this.block_graph.put(new Integer(100), new Integer(89));
-        this.block_graph.put(new Integer(100), new Integer(90));
-        this.block_graph.put(new Integer(100), new Integer(92));
-        this.block_graph.put(new Integer(101), new Integer(93));
-        this.block_graph.put(new Integer(101), new Integer(94));
-        this.block_graph.put(new Integer(101), new Integer(95));
-        this.block_graph.put(new Integer(102), new Integer(96));
-        this.block_graph.put(new Integer(102), new Integer(97));
-        this.block_graph.put(new Integer(102), new Integer(98));
-        this.block_graph.put(new Integer(103), new Integer(99));
-        this.block_graph.put(new Integer(103), new Integer(100));
-        this.block_graph.put(new Integer(103), new Integer(101));
-
+        this.block_graph.put(new Integer(107), new Integer(91));
+        this.block_graph.put(new Integer(107), new Integer(92));
+        this.block_graph.put(new Integer(107), new Integer(93));
+        this.block_graph.put(new Integer(107), new Integer(94));
+        this.block_graph.put(new Integer(108), new Integer(95));
+        this.block_graph.put(new Integer(108), new Integer(96));
+        this.block_graph.put(new Integer(108), new Integer(97));
+        this.block_graph.put(new Integer(109), new Integer(98));
+        this.block_graph.put(new Integer(109), new Integer(98));
+        this.block_graph.put(new Integer(109), new Integer(100));
+        this.block_graph.put(new Integer(110), new Integer(101));
+        this.block_graph.put(new Integer(110), new Integer(102));
+        this.block_graph.put(new Integer(110), new Integer(103));
+        this.block_graph.put(new Integer(111), new Integer(104));
+        this.block_graph.put(new Integer(111), new Integer(105));
+        this.block_graph.put(new Integer(111), new Integer(106));
+        this.block_graph.put(new Integer(112), new Integer(107));
+        this.block_graph.put(new Integer(112), new Integer(108));
+        this.block_graph.put(new Integer(112), new Integer(109));
     }
 
     public static void updateCost(Avertex currentVertex, Avertex newVertex, int cost) {
