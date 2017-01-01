@@ -18,6 +18,8 @@ public class SQLiteManager extends SQLiteOpenHelper {
     private final static String _ID = "_id"; //欄位名稱
     private final static String PROJ_ID = "proj_id"; //專題id
     private final static String NAME = "name"; //欄位名稱
+    private final static String X = "x"; //欄位名稱
+    private final static String Y = "y"; //欄位名稱
     private final static String IFRATED = "ifRated"; //欄位名稱
 
     public SQLiteManager (Context context) {
@@ -38,7 +40,9 @@ public class SQLiteManager extends SQLiteOpenHelper {
         String create_FAVORITE_TABLE = "CREATE TABLE " + FAVORITE_TABLE + " ("
                             + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                             + PROJ_ID + " INT(11), "
-                            + NAME + " VARCHAR(50))";
+                            + NAME + " VARCHAR(50),"
+                            + X + " DOUBLE, "
+                            + Y + " DOUBLE)";
         String create_RATED_TABLE = "CREATE TABLE " + RATED_TABLE + " ("
                             + IFRATED + " INT(11))";
 
@@ -86,16 +90,16 @@ public class SQLiteManager extends SQLiteOpenHelper {
     }
 
     public Cursor getInfo(SQLiteDatabase db) {
-        return  db.query(FAVORITE_TABLE, new String[] {_ID, PROJ_ID, NAME}, null, null, null, null, null);
+        return  db.query(FAVORITE_TABLE, new String[] {_ID, PROJ_ID, NAME, X, Y}, null, null, null, null, null);
     }
 
     public Cursor ifRated(SQLiteDatabase db) {
         return  db.query(RATED_TABLE, new String[] {IFRATED}, null, null, null, null, null);
     }
 
-    public void insert(SQLiteDatabase db, String id, String name){
+    public void insert(SQLiteDatabase db, String id, String name, String x, String y){
         Log.i("insert id", id);
-        db.execSQL("INSERT INTO favorite_table (proj_id, name) VALUES(" + id + ", '" + name + "')");
+        db.execSQL("INSERT INTO favorite_table (proj_id, name, x, y) VALUES(" + id + ", '" + name + "'," + x + "," + y + ")");
     }
 
     public void delete(SQLiteDatabase db, String id){
