@@ -50,7 +50,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-
+class ibeacon{
+    String name;
+    String mac_addr;
+}
+class point{
+    double known_x;
+    double known_y;
+    HashMap<String, Integer> rssi = new HashMap<>();
+}
 public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCallback{
 
     private View view;
@@ -65,7 +73,7 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
 
     private Timer tmr;
     private static final long DELAY_TIME = 5000;
-    private static final long PERIOD_TIME = 2000;
+    private static final long PERIOD_TIME = 500;
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     private static final int REQUEST_ENABLE_BT = 1;
@@ -73,14 +81,19 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
     //JSON URL
     public static final String DATA_URL = "http://140.116.82.52/iBeaconNavigationApp/getBeaconLocation.php";
 
-    private double[] x_array = new double[21];
-    private double[] y_array = new double[21];
+    private double[] x_array = new double[46];
+    private double[] y_array = new double[46];
+    private ArrayList<Integer> detect_point;
     private static double x;
     private static double y;
     private static double previous_x;
     private static double previous_y;
     public static double currentX;
     public static double currentY;
+
+    private ibeacon beacon[] = new ibeacon[16];
+    private point fieldPoint[] = new point[46];
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -201,8 +214,19 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
         deviceListView.setAdapter(mDeviceAdapter);
 
         // init predicted location
-        previous_x = 500;
-        previous_y = 500;
+        previous_x = 643.81;
+        previous_y = 474.71 ;
+
+        //init deteced point ID
+        detect_point = new ArrayList<>();
+
+        //init point_info
+        for(int i=0;i<16;i++){
+            beacon[i] = new ibeacon();
+        }
+        for(int i=0;i<46;i++){
+            fieldPoint[i] = new point();
+        }
     }
 
     private void fetchDataFromMysqlToSQLite(){
@@ -226,24 +250,38 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
                                 double x_coordinate = jsonObject.getDouble("x");
                                 double y_coordinate = jsonObject.getDouble("y");
                                 DB.insert_ibeacon_data(beacon_id, mac_addr, name, x_coordinate, y_coordinate);
+
+                                beacon[i].mac_addr = mac_addr;
+                                beacon[i].name = name;
                             }
 
                             for(int i = 0; i < point_info_data.length(); i++){
                                 JSONObject jsonObject = point_info_data.getJSONObject(i);
 
-                                int point_id = jsonObject.getInt("point_id");
+                                /*int point_id = jsonObject.getInt("point_id");
                                 int beacon_id = jsonObject.getInt("beacon_id");
                                 int rssi = jsonObject.getInt("rssi");
-                                DB.insert_point_info_data(point_id,beacon_id,rssi);
+                                DB.insert_point_info_data(point_id,beacon_id,rssi);*/
+
+                                String beaconName = jsonObject.getString("mac_addr");
+                                int point_rssi = jsonObject.getInt("rssi");
+
+                                fieldPoint[i/10].rssi.put(beaconName,point_rssi);
                             }
 
                             for(int i = 0; i < detect_point_data.length(); i++){
                                 JSONObject jsonObject = detect_point_data.getJSONObject(i);
 
                                 int point_id = jsonObject.getInt("point_id");
+                                // 順便存現在有哪些已知點ID
+                                detect_point.add(point_id);
                                 double x = jsonObject.getDouble("x");
                                 double y = jsonObject.getDouble("y");
                                 DB.insert_detect_point_data(point_id,x,y);
+
+                                fieldPoint[i].known_x = x;
+                                fieldPoint[i].known_y = y;
+
                             }
 
                         } catch (JSONException e){
@@ -280,41 +318,45 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
                 startScan();
             }
 
-            Double[] l = new Double[21];
+            Double[] l = new Double[detect_point.size()];
             HashMap<Double, Integer> hashMap = new HashMap<>();
 
             SQLiteDatabase db = DB.getReadableDatabase();
             Cursor mCursor;
 
-            for (int i = 0; i < 21; i++)
+            for (int i = 0; i < detect_point.size(); i++)
                 l[i] = 10000.0;
 
             //場域內已知點數量
-            for (int i = 1; i <= 9; i++) {
+            for (int i = 0; i < detect_point.size(); i++) {
                 Set<String> keys = map.keySet();// 得到全部的key
                 Iterator<String> iter = keys.iterator() ;
 
                 while (iter.hasNext()) {
                     String beacon = iter.next();
+                    if(fieldPoint[i].rssi.get(beacon) == null)
+                        continue;
                     int rssi = map.get(beacon) / 50;
-                    mCursor = db.rawQuery("SELECT ibeacon.beacon_id, point_info.rssi FROM ibeacon JOIN point_info ON ibeacon.beacon_id=point_info.beacon_id " +
-                            "WHERE ibeacon.mac_addr='" + beacon + "' and point_info.point_id=" + Integer.toString(i), null);
+                    /*mCursor = db.rawQuery("SELECT ibeacon.beacon_id, point_info.rssi FROM ibeacon JOIN point_info ON ibeacon.beacon_id=point_info.beacon_id " +
+                            "WHERE ibeacon.mac_addr='" + beacon + "' and point_info.point_id=" + Integer.toString(detect_point.get(i)), null);
                     if (mCursor.moveToFirst()) {
                         do {
                             l[i] += Math.pow(Math.abs(Integer.parseInt(mCursor.getString(1)) - rssi), 2);
                         } while (mCursor.moveToNext());
                     }
-                    mCursor.close();
+                    mCursor.close();*/
+                    Log.i("err",beacon);
+                    l[i] += Math.pow(Math.abs(fieldPoint[i].rssi.get(beacon) - rssi),2);
                 }
 
-                mCursor = db.rawQuery("SELECT x,y FROM detect_point WHERE point_id=" + Integer.toString(i), null);
+                /*mCursor = db.rawQuery("SELECT x,y FROM detect_point WHERE point_id=" + Integer.toString(detect_point.get(i)), null);
                 if (mCursor.moveToFirst()) {
                     do {
                         x_array[i] = Double.parseDouble(mCursor.getString(0));
                         y_array[i] = Double.parseDouble(mCursor.getString(1));
                     } while (mCursor.moveToNext());
                 }
-                mCursor.close();
+                mCursor.close();*/
 
                 l[i] = Math.sqrt(l[i]);
                 Log.i("dis", Double.toString(l[i]));
@@ -324,8 +366,8 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
             Arrays.sort(l);
             double x = 0, y = 0;
             for (int k = 0; k < 4; k++) {
-                x += x_array[hashMap.get(l[k])];
-                y += y_array[hashMap.get(l[k])];
+                x += fieldPoint[hashMap.get(l[k])].known_x;
+                y += fieldPoint[hashMap.get(l[k])].known_y;
                 Log.i("num", Integer.toString(hashMap.get(l[k])));
             }
             double new_x = x / 4;
@@ -351,7 +393,7 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
             currentX = x;
             currentY = y;
 
-            if(Math.abs(x-previous_x) < 1250 && Math.abs(y-previous_y) < 1250){
+            if(Math.abs(x-previous_x) < 30 && Math.abs(y-previous_y) < 30){
                 previous_x = x;
                 previous_y = y;
             }
