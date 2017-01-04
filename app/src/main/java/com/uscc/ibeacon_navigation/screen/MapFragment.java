@@ -92,7 +92,7 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
         openDB();
 
         // navigation
-        star = new AStar(135, 110);
+        star = new AStar(54, 86);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Android M Permission check
@@ -117,8 +117,8 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
             public void onClick(View view) {
                 // do navigation first
 //                executeAStar((int)currentX, (int)currentY, 100, 100);
-                executeAStar(0, 0, 20, 30);
-                //executeAStar(20, 30, 54, 60);
+                executeAStar(0, 0, 10, 10);
+                executeAStar(10, 10, 25, 60);
                 //executeAStar(54, 60, 110, 84);
             }
         });
@@ -439,20 +439,23 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
 
     private String executeAStar(int startX, int startY, int endX, int endY){
         // grid, starting point, ending point, blocked point
-        Map<Integer, Integer> result = AStar.executeAStar(140, 120, startX, startY, endX, endY);
+        Map<Integer, Integer> result = AStar.executeAStar(startX, startY, endX, endY);
         Map<Integer, Integer> real_result = new HashMap<Integer, Integer>();
-        // iterate through and add all points: 145, 178
+        // iterate through and add all points for offset:  550, 300
         Iterator<Map.Entry<Integer, Integer>> iter = result.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry<Integer, Integer> pair = (Map.Entry)iter.next();
             Integer keyy = pair.getKey();
             Integer valuee = pair.getValue();
-            real_result.put(keyy + 145, valuee + 177);
-            int tmp_x = keyy + 145;
-            int tmp_y = valuee + 177;
+            keyy = keyy + 550;
+            valuee = valuee + 300;
+            real_result.put(keyy, valuee);
+            int tmp_x = keyy;
+            int tmp_y = valuee;
+
             mWebViewMap.loadUrl("javascript:disPoint(" + tmp_x + ", " + tmp_y + ")");
         }
-        Log.e("original result", printMap(result));
+        //Log.e("original result", printMap(result));
         Log.e("real result", printMap(real_result));
 
         // trace back the path
