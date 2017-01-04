@@ -52,6 +52,8 @@ public class ProjectFragment extends Fragment {
     private Toast toast;
     private String id;
     private String name;
+    private String x;
+    private String y;
     private String origin_rate;
     private JSONObject result;
     private JSONArray result2;
@@ -103,7 +105,7 @@ public class ProjectFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
-                add_favorite(String.valueOf(id), name);
+                add_favorite(String.valueOf(id), name, x, y);
                 return true;
             case R.id.action_rate:
                 checkIfRated();
@@ -243,6 +245,9 @@ public class ProjectFragment extends Fragment {
             textIntroTitle.setText(R.string.proj_intro);
             textIntroduction.setText(j.getString("introduction"));
 
+            x = j.getString("x");
+            y = j.getString("y");
+
             String pic = j.getString("img_path").replace("..", "http://140.116.82.52/iBeaconNavigation");
             getBitmapFromURL(pic);
 
@@ -329,7 +334,7 @@ public class ProjectFragment extends Fragment {
         DB.close();
     }
 
-    private void add_favorite(String id, String name){
+    private void add_favorite(String id, String name, String x, String y){
         Cursor cursor = DB.getInfo(DB.getReadableDatabase());
         int repeat = 0;
         if(cursor.getCount() > 0) {
@@ -350,7 +355,7 @@ public class ProjectFragment extends Fragment {
         cursor.close();
         if(repeat == 0) {
             SQLiteDatabase db = DB.getWritableDatabase();
-            DB.insert(db, id, name);
+            DB.insert(db, id, name, x, y);
             //顯示Toast
             toast = Toast.makeText(getActivity(),
                     "成功加入我的最愛", Toast.LENGTH_LONG);
