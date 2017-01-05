@@ -2,8 +2,9 @@ package com.uscc.ibeacon_navigation.algorithm;
 
 import android.util.Log;
 
+import com.google.common.collect.HashMultimap;
+
 import java.util.HashMap;
-import java.util.Map;
 import java.util.PriorityQueue;
 
 public class AStar {
@@ -601,9 +602,7 @@ public class AStar {
         }
     }
 
-    public static Map<Integer, Integer> executeAStar(int startX, int startY, int endX, int endY) {
-        //System.out.println("start A* algorithm...\n");
-
+    public static HashMultimap<Integer, Integer> executeAStar(int startX, int startY, int endX, int endY) {
         graph = new Avertex[graphX][graphY];
         closedList = new boolean[graphX][graphY];
         openList = new PriorityQueue<>();
@@ -620,16 +619,6 @@ public class AStar {
         // initialize final cost to 0
         graph[startX][startY].finalCost = 0;
 
-        /*
-        Map<Integer, Integer> sorted = new TreeMap<Integer, Integer>(block_graph);
-        // set blocked vertices
-        for (Map.Entry<Integer, Integer> entry : sorted.entrySet())
-        {
-            // TODO: not sure about the type of the data
-            Log.e("blocked", String.valueOf(entry.getKey()) + ", " + String.valueOf(entry.getValue()));
-            setBlocked(entry.getKey(), entry.getValue());
-        }
-        */
         initBlock();
 
         // run algorithm
@@ -647,7 +636,7 @@ public class AStar {
         }
         System.out.println();
 
-        Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+        HashMultimap<Integer, Integer> result = HashMultimap.create();
         // trace back the path
         System.out.print("Score:\n");
         if (closedList[endX][endY]) {
@@ -664,7 +653,5 @@ public class AStar {
             Log.e("no path", "no path");
             return result;
         }
-//        return result;
     }
-
 }
