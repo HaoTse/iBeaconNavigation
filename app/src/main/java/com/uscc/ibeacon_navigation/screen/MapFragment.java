@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
@@ -133,15 +134,87 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
         navigationButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // 得到當下的位置
                 Multimap<Integer, Integer> points = HashMultimap.create();
                 // get all data from favorites
                 points = fetchFavoritePoints();
-                Iterator<Map.Entry<Integer, Integer>> iterator = points.entries().iterator();
-                while(iterator.hasNext()) {
-                    Map.Entry<Integer, Integer> point1 = iterator.next();
-                    Map.Entry<Integer, Integer> point2 = iterator.next();
-                    Log.e("point", point1.getKey() + "," + point1.getValue() + " -> " +point2.getKey() + "," + point2.getValue());
-                    executeAStar(point1.getKey(), point1.getValue(), point2.getKey(), point2.getValue());
+                if (!points.isEmpty()) {
+                    Iterator<Map.Entry<Integer, Integer>> iterator = points.entries().iterator();
+                    int[][] a = new int[54][86];
+                    List<String> lists = new ArrayList<String>();
+                    int size = points.size();
+                    if (size != 0) {
+                        while (iterator.hasNext()) {
+                            Map.Entry<Integer, Integer> point = iterator.next();
+                            lists.add(String.valueOf(point.getKey()) + "," + point.getValue());
+                        }
+
+                        int list_size = lists.size();
+                        Iterator<String> iter = lists.iterator();
+                        for (int i = 0; i< list_size - 1; i++) {
+                            String a1 = lists.get(i);
+                            String a2 = lists.get(i + 1);
+                            String[] aa1 = a1.split(",");
+                            String[] aa2 = a2.split(",");
+                            executeAStar(Integer.parseInt(aa1[0]), Integer.parseInt(aa1[1]), Integer.parseInt(aa2[0]), Integer.parseInt(aa2[1]));
+                        }
+                    }
+
+                    /*
+                    do {
+                        if (size == 1) {
+                            break;
+                        }
+                        Map.Entry<Integer, Integer> point1 = iterator.next();
+                        Map.Entry<Integer, Integer> previous = point1;
+                        if (count == (size - 2)) {
+                            // last element
+                            Map.Entry<Integer, Integer> point = iterator.next();
+
+                            Log.e("1111", String.valueOf(point));
+                            if (previous == null) {
+                                Log.e("das", "fdsgdfgadfs");
+                                break;
+                            }
+                            executeAStar(previous.getKey(), previous.getValue(), point.getKey(), point.getValue());
+                            break;
+                        }
+                        Map.Entry<Integer, Integer> point2 = iterator.next();
+                        Log.e("count", String.valueOf(count));
+                        count++;
+                        Log.e("point", point1.getKey() + "," + point1.getValue() + " -> " + point2.getKey() + "," + point2.getValue());
+                        executeAStar(point1.getKey(), point1.getValue(), point2.getKey(), point2.getValue());
+                    } while(iterator.hasNext());
+                    */
+                    /*
+                    while (iterator.hasNext()) {
+                        if (size == 1) {
+                            break;
+                        }
+                        Map.Entry<Integer, Integer> previous = null;
+                        Map.Entry<Integer, Integer> point1 = iterator.next();
+                        previous = point1;
+                        Log.e("previous", String.valueOf(previous));
+                        // 3 以上
+                        if (count == (size - 2)) {
+                            // last element
+                            Map.Entry<Integer, Integer> point = iterator.next();
+                            Log.e("1111", String.valueOf(point));
+                            if (previous == null) {
+                                Log.e("das", "fdsgdfgadfs");
+                                break;
+                            }
+                            executeAStar(previous.getKey(), previous.getValue(), point.getKey(), point.getValue());
+                            break;
+                        }
+//                        Map.Entry<Integer, Integer> point1 = iterator.next();
+                        Map.Entry<Integer, Integer> point2 = iterator.next();
+                        Log.e("count", String.valueOf(count));
+                        count++;
+                        Log.e("point", point1.getKey() + "," + point1.getValue() + " -> " + point2.getKey() + "," + point2.getValue());
+                        executeAStar(point1.getKey(), point1.getValue(), point2.getKey(), point2.getValue());
+                    }
+                    */
                 }
             }
         });
@@ -531,12 +604,11 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
 
     // use Guava Multimap to fetch all points(x, y) out of SQLite
     private Multimap<Integer, Integer> fetchFavoritePoints() {
-
         Multimap<Integer, Integer> favoritePoints = HashMultimap.create();
         Cursor cursor = DB.getInfo(DB.getReadableDatabase());
-        if(cursor.getCount() > 0) {
+        if (cursor.getCount() > 0) {
             cursor.moveToFirst();
-            do{
+            do {
                 String x = cursor.getString(3);
                 String y = cursor.getString(4);
                 String parseX = x.substring(0, 3);
@@ -547,7 +619,6 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
                 pointY -= 300;
                 pointX /= 5;
                 pointY /= 5;
-//                Log.e("x&y", String.valueOf(pointX) + ", " + String.valueOf(pointY));
                 favoritePoints.put(pointX, pointY);
             }
             while (cursor.moveToNext());
