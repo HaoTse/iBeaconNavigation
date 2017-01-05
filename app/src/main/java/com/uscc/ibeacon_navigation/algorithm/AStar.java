@@ -31,7 +31,6 @@ public class AStar {
         // initialize blocked_graph here
         block_graph = new HashMap<Integer, Integer>();
         // add all blocked_space to blocked_graph
-        // initializeBlockGraph();
         initBlock();
     }
 
@@ -53,6 +52,13 @@ public class AStar {
     // new initialization function
     private static void initBlock() {
         // 左邊牆壁
+        for (int j= 20; j < graphY; j++) {
+            graph[0][j] = null;
+            graph[1][j] = null;
+            graph[2][j] = null;
+            graph[3][j] = null;
+            graph[4][j] = null;
+        }
         for (int j= 20; j < graphY; j++) {
             graph[5][j] = null;
         }
@@ -103,7 +109,7 @@ public class AStar {
         }
 
         // 下方牆壁
-        for (int i = 23; i< 32; i++) {
+        for (int i = 23; i< graphX; i++) {
             graph[i][graphY - 2] = null;
             graph[i][graphY - 1] = null;
         }
@@ -173,20 +179,25 @@ public class AStar {
         graph[18][38] = null;
         graph[18][39] = null;
         graph[18][40] = null;
+        graph[19][40] = null;
         graph[19][41] = null;
         graph[19][42] = null;
         graph[19][43] = null;
         graph[19][44] = null;
+        graph[20][44] = null;
         graph[20][45] = null;
         graph[20][46] = null;
         graph[20][47] = null;
+        graph[21][47] = null;
         graph[21][48] = null;
         graph[21][49] = null;
         graph[21][50] = null;
         graph[21][51] = null;
+        graph[22][51] = null;
         graph[22][52] = null;
         graph[22][53] = null;
         graph[22][54] = null;
+        graph[23][54] = null;
         graph[23][55] = null;
         graph[23][56] = null;
         graph[23][57] = null;
@@ -255,54 +266,101 @@ public class AStar {
         graph[25][64] = null;
         graph[25][65] = null;
         graph[25][66] = null;
+        graph[25][67] = null;
         graph[26][67] = null;
         graph[26][68] = null;
         graph[26][69] = null;
+        graph[26][70] = null;
         graph[27][70] = null;
         graph[27][71] = null;
         graph[27][72] = null;
         graph[27][73] = null;
+        graph[28][73] = null;
         graph[28][74] = null;
         graph[28][75] = null;
         graph[28][76] = null;
+        graph[29][76] = null;
         graph[29][77] = null;
         graph[29][78] = null;
         graph[29][79] = null;
+        graph[30][79] = null;
         graph[30][80] = null;
         graph[30][81] = null;
         graph[30][82] = null;
-        graph[30][83] = null;
 
-        // 門1
-        graph[34][0] = null;
-        graph[34][1] = null;
-        graph[34][2] = null;
-        graph[34][3] = null;
-        graph[35][2] = null;
-        graph[35][3] = null;
-        graph[35][4] = null;
-        graph[35][5] = null;
-        graph[36][5] = null;
-        graph[36][6] = null;
-        graph[36][7] = null;
-        graph[34][8] = null;
-        graph[37][8] = null;
-        graph[37][9] = null;
-        graph[37][10] = null;
-
-        // 門2
-        graph[37][15] = null;
-        graph[37][16] = null;
-        graph[37][17] = null;
-        graph[38][17] = null;
-        graph[38][18] = null;
-        graph[38][19] = null;
-        graph[39][19] = null;
-        graph[39][20] = null;
-        graph[39][21] = null;
-        graph[40][21] = null;
-        graph[40][22] = null;
-        graph[40][23] = null;
+        // 地圖右上角障礙區
+        // 門與樓梯
+        for (int i = 30; i < 33; i++) {
+            graph[i][0] = null;
+            graph[i][1] = null;
+            graph[i][2] = null;
+        }
+        // 門區域
+        for (int j = 0; j< 2; j++) {
+            graph[33][j] = null;
+        }
+        for (int j = 0; j< 2; j++) {
+            graph[34][j] = null;
+        }
+        for (int j = 0; j< 5; j++) {
+            graph[35][j] = null;
+        }
+        for (int j = 0; j< 8; j++) {
+            graph[36][j] = null;
+        }
+        for (int j = 0; j< 11; j++) {
+            graph[37][j] = null;
+        }
+        for (int j = 0; j< 14; j++) {
+            graph[38][j] = null;
+        }
+        for (int j = 0; j< 17; j++) {
+            graph[39][j] = null;
+        }
+        for (int j = 0; j< 20; j++) {
+            graph[40][j] = null;
+        }
+        for (int j = 0; j< 23; j++) {
+            graph[41][j] = null;
+        }
+        for (int j = 0; j< 26; j++) {
+            graph[42][j] = null;
+        }
+        for (int j = 0; j< 29; j++) {
+            graph[43][j] = null;
+        }
+        // 門區遇到教室角角
+        for (int j = 0; j< 29; j++) {
+            graph[44][j] = null;
+        }
+        for (int j = 0; j< 28; j++) {
+            graph[45][j] = null;
+        }
+        for (int j = 0; j< 27; j++) {
+            graph[46][j] = null;
+        }
+        // 教室外面都不能走的區域
+        for (int j = 0; j< 30; j++) {
+            graph[47][j] = null;
+        }
+        for (int j = 0; j< 36; j++) {
+            graph[48][j] = null;
+        }
+        for (int j = 0; j< 42; j++) {
+            graph[49][j] = null;
+        }
+        for (int j = 0; j< 48; j++) {
+            graph[50][j] = null;
+        }
+        for (int j = 0; j< 54; j++) {
+            graph[51][j] = null;
+        }
+        for (int j = 0; j< 60; j++) {
+            graph[52][j] = null;
+        }
+        for (int j = 0; j< 66; j++) {
+            graph[53][j] = null;
+        }
     }
 
 

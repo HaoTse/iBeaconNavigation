@@ -140,14 +140,9 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
                 while(iterator.hasNext()) {
                     Map.Entry<Integer, Integer> point1 = iterator.next();
                     Map.Entry<Integer, Integer> point2 = iterator.next();
-                    // TODO: not sure about the iteration
                     Log.e("point", point1.getKey() + "," + point1.getValue() + " -> " +point2.getKey() + "," + point2.getValue());
                     executeAStar(point1.getKey(), point1.getValue(), point2.getKey(), point2.getValue());
                 }
-//                for (Map.Entry<Integer, Integer> entry : points.entries()) {
-//                    int pointX = entry.getKey();
-//                    int pointY = entry.getValue();
-//                }
             }
         });
 
@@ -504,8 +499,8 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
             Map.Entry<Integer, Integer> pair = (Map.Entry) iter.next();
             Integer keyy = pair.getKey();
             Integer valuee = pair.getValue();
-            keyy = keyy * 3 + 550;
-            valuee = valuee * 3 + 300;
+            keyy = keyy * 3 + 610;
+            valuee = valuee * 3 + 420;
             real_result.put(keyy, valuee);
             int tmp_x = keyy;
             int tmp_y = valuee;
