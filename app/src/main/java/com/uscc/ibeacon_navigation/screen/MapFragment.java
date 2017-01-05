@@ -54,12 +54,11 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-class ibeacon {
+class ibeacon{
     String name;
     String mac_addr;
 }
-
-class point {
+class point{
     double known_x;
     double known_y;
     HashMap<String, Integer> rssi = new HashMap<>();
@@ -98,7 +97,7 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
     public static double currentY;
 
     private ibeacon beacon[] = new ibeacon[16];
-    private point fieldPoint[] = new point[46];
+    private point fieldPoint[] = new point[85];
 
 
     @Override
@@ -159,62 +158,6 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
                             executeAStar(Integer.parseInt(aa1[0]), Integer.parseInt(aa1[1]), Integer.parseInt(aa2[0]), Integer.parseInt(aa2[1]));
                         }
                     }
-
-                    /*
-                    do {
-                        if (size == 1) {
-                            break;
-                        }
-                        Map.Entry<Integer, Integer> point1 = iterator.next();
-                        Map.Entry<Integer, Integer> previous = point1;
-                        if (count == (size - 2)) {
-                            // last element
-                            Map.Entry<Integer, Integer> point = iterator.next();
-
-                            Log.e("1111", String.valueOf(point));
-                            if (previous == null) {
-                                Log.e("das", "fdsgdfgadfs");
-                                break;
-                            }
-                            executeAStar(previous.getKey(), previous.getValue(), point.getKey(), point.getValue());
-                            break;
-                        }
-                        Map.Entry<Integer, Integer> point2 = iterator.next();
-                        Log.e("count", String.valueOf(count));
-                        count++;
-                        Log.e("point", point1.getKey() + "," + point1.getValue() + " -> " + point2.getKey() + "," + point2.getValue());
-                        executeAStar(point1.getKey(), point1.getValue(), point2.getKey(), point2.getValue());
-                    } while(iterator.hasNext());
-                    */
-                    /*
-                    while (iterator.hasNext()) {
-                        if (size == 1) {
-                            break;
-                        }
-                        Map.Entry<Integer, Integer> previous = null;
-                        Map.Entry<Integer, Integer> point1 = iterator.next();
-                        previous = point1;
-                        Log.e("previous", String.valueOf(previous));
-                        // 3 以上
-                        if (count == (size - 2)) {
-                            // last element
-                            Map.Entry<Integer, Integer> point = iterator.next();
-                            Log.e("1111", String.valueOf(point));
-                            if (previous == null) {
-                                Log.e("das", "fdsgdfgadfs");
-                                break;
-                            }
-                            executeAStar(previous.getKey(), previous.getValue(), point.getKey(), point.getValue());
-                            break;
-                        }
-//                        Map.Entry<Integer, Integer> point1 = iterator.next();
-                        Map.Entry<Integer, Integer> point2 = iterator.next();
-                        Log.e("count", String.valueOf(count));
-                        count++;
-                        Log.e("point", point1.getKey() + "," + point1.getValue() + " -> " + point2.getKey() + "," + point2.getValue());
-                        executeAStar(point1.getKey(), point1.getValue(), point2.getKey(), point2.getValue());
-                    }
-                    */
                 }
             }
         });
@@ -300,17 +243,17 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
         deviceListView.setAdapter(mDeviceAdapter);
 
         // init predicted location
-        previous_x = 643.81;
-        previous_y = 474.71;
+        previous_x = 601.61;
+        previous_y = 481.30 ;
 
         //init deteced point ID
         detect_point = new ArrayList<>();
 
         //init point_info
-        for (int i = 0; i < 16; i++) {
+        for(int i=0;i<16;i++){
             beacon[i] = new ibeacon();
         }
-        for (int i = 0; i < 46; i++) {
+        for(int i=0;i<85;i++){
             fieldPoint[i] = new point();
         }
     }
@@ -456,8 +399,8 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
                 y += fieldPoint[hashMap.get(l[k])].known_y;
                 Log.i("num", Integer.toString(hashMap.get(l[k])));
             }
-            double new_x = x / 4;
-            double new_y = y / 4;
+            double new_x = x / 8;
+            double new_y = y / 8;
             Log.i("newx", Double.toString(new_x));
             Log.i("newy", Double.toString(new_y));
 
@@ -478,12 +421,11 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
 
             currentX = x;
             currentY = y;
-
             if (Math.abs(x - previous_x) < 30 && Math.abs(y - previous_y) < 30) {
+
                 previous_x = x;
                 previous_y = y;
             }
-
             mWebViewMap.loadUrl("javascript:refreshPoint(" + previous_x + ", " + previous_y + ")");
         }
     };
@@ -627,6 +569,5 @@ public class MapFragment extends Fragment implements BluetoothAdapter.LeScanCall
 
         return favoritePoints;
     }
-
 
 }

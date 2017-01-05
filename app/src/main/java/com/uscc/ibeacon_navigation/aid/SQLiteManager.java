@@ -44,6 +44,7 @@ public class SQLiteManager extends SQLiteOpenHelper {
                             + X + " DOUBLE, "
                             + Y + " DOUBLE)";
         String create_RATED_TABLE = "CREATE TABLE " + RATED_TABLE + " ("
+                            + PROJ_ID + " INT(11), "
                             + IFRATED + " INT(11))";
 
         db.execSQL(create_FAVORITE_TABLE);
@@ -86,7 +87,9 @@ public class SQLiteManager extends SQLiteOpenHelper {
     }
 
     private void initRate(SQLiteDatabase db){
-        db.execSQL("INSERT INTO rated_table (ifRated) VALUES (0)");
+        for(int i=1;i<45;i++) {
+            db.execSQL("INSERT INTO rated_table (proj_id, ifRated) VALUES (" + String.valueOf(i)+", 0)");
+        }
     }
 
     public Cursor getInfo(SQLiteDatabase db) {
@@ -94,7 +97,7 @@ public class SQLiteManager extends SQLiteOpenHelper {
     }
 
     public Cursor ifRated(SQLiteDatabase db) {
-        return  db.query(RATED_TABLE, new String[] {IFRATED}, null, null, null, null, null);
+        return  db.query(RATED_TABLE, new String[] {PROJ_ID, IFRATED}, null, null, null, null, null);
     }
 
     public void insert(SQLiteDatabase db, String id, String name, String x, String y){
@@ -107,10 +110,10 @@ public class SQLiteManager extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM favorite_table WHERE proj_id="+id);
     }
 
-    public void rated(SQLiteDatabase db){
+    public void rated(SQLiteDatabase db, String id){
         ContentValues cv = new ContentValues();
         cv.put("ifRated", "1");
-        db.update(RATED_TABLE, cv, "ifRated = 0", null);
+        db.update(RATED_TABLE, cv, "proj_id = " + id, null);
     }
 
     /* 新增 ibeacon Table內容

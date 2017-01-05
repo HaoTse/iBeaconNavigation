@@ -367,10 +367,12 @@ public class ProjectFragment extends Fragment {
         Cursor cursor = DB.ifRated(DB.getReadableDatabase());
         if(cursor.getCount() > 0) {
             cursor.moveToFirst();
-            if(cursor.getString(0).equals("0")){
-                checkRate = 0;
-            } else{
-                checkRate = 1;
+            if(cursor.getString(0).equals(id)){
+                if(cursor.getString(1).equals("0")){
+                    checkRate = 0;
+                } else{
+                    checkRate = 1;
+                }
             }
         }
         cursor.close();
@@ -378,7 +380,7 @@ public class ProjectFragment extends Fragment {
 
     private void Rated(){
         SQLiteDatabase db = DB.getWritableDatabase();
-        DB.rated(db);
+        DB.rated(db, id);
     }
 
 }
